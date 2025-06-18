@@ -1,0 +1,40 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "@typescript-eslint/recommended",
+    "prettier"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "plugins": [
+    "@typescript-eslint",
+    "playwright"
+  ],
+  "rules": {
+    "@typescript-eslint/no-unused-vars": "error",
+    "@typescript-eslint/no-explicit-any": "warn",
+    "playwright/missing-playwright-await": "error",
+    "playwright/no-focused-test": "error",
+    "playwright/no-skipped-test": "warn",
+    "playwright/valid-expect": "error",
+    "playwright/prefer-web-first-assertions": "error",
+    "playwright/no-useless-await": "error",
+    "playwright/no-page-pause": "warn"
+  },
+  "overrides": [
+    {
+      "files": ["tests/**/*.ts", "**/*.spec.ts", "**/*.test.ts"],
+      "rules": {
+        "playwright/expect-expect": "error"
+      }
+    }
+  ]
+}
