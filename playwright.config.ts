@@ -12,7 +12,7 @@ import { defineConfig, devices } from '@playwright/test';
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  testDir: './tests-examples',
+  testDir: './sauce-demo',
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -34,6 +34,7 @@ export default defineConfig({
     launchOptions: {
       slowMo: 500,
     },
+    testIdAttribute: 'data-test',
   },
 
   /* Configure projects for major browsers */
