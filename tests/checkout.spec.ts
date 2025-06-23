@@ -15,7 +15,7 @@ test.describe('Checkout Products', () => {
 
     await loginPage.login();
     await inventoryPage.verifyPageLoaded();
-    await inventoryPage.addProductsToCart(inventoryPage, PRODUCTS);
+    await inventoryPage.addProductsToCart(PRODUCTS);
     await inventoryPage.navigateToCart();
     await cartPage.verifyPageLoaded();
     await cartPage.proceedToCheckout();
@@ -34,7 +34,7 @@ test.describe('Checkout Products', () => {
 
     await loginPage.login();
     await inventoryPage.verifyPageLoaded();
-    await inventoryPage.addProductsToCart(inventoryPage, PRODUCTS);
+    await inventoryPage.addProductsToCart(PRODUCTS);
     await inventoryPage.navigateToCart();
     await cartPage.verifyPageLoaded();
     await cartPage.proceedToCheckout();
@@ -98,7 +98,7 @@ test.describe('Checkout Products', () => {
     await inventoryPage.verifyPageLoaded();
 
     // Step 2: Add products to cart
-    await inventoryPage.addProductsToCart(inventoryPage, PRODUCTS);
+    await inventoryPage.addProductsToCart(PRODUCTS);
 
     // Step 3: Go to cart and verify items
     await inventoryPage.navigateToCart();
