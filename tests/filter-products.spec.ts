@@ -1,5 +1,4 @@
-import { test, expect } from '@playwright/test';
-import { LoginPage, InventoryPage } from '../pages';
+import { test, expect } from '../fixtures/authenticate';
 import { PRODUCT_NAMES } from '../constants/products';
 
 const ALL_PRODUCTS = [
@@ -21,16 +20,10 @@ const PRODUCT_PRICES = {
 };
 
 test.describe('Filter Products in Inventory', () => {
-  test.beforeEach(async ({ page }) => {
-    const loginPage = new LoginPage(page);
-    await loginPage.login();
-  });
-
   test('That verify user can filter products by Name (A to Z)', async ({
     page,
+    inventoryPage,
   }) => {
-    const inventoryPage = new InventoryPage(page);
-    await inventoryPage.verifyPageLoaded();
     // Select Name (A to Z)
     await page.getByRole('combobox').selectOption('az');
     // Get product names in order
@@ -41,9 +34,8 @@ test.describe('Filter Products in Inventory', () => {
 
   test('That verify user can filter products by Name (Z to A)', async ({
     page,
+    inventoryPage,
   }) => {
-    const inventoryPage = new InventoryPage(page);
-    await inventoryPage.verifyPageLoaded();
     // Select Name (Z to A)
     await page.getByRole('combobox').selectOption('za');
     // Get product names in order
@@ -54,9 +46,8 @@ test.describe('Filter Products in Inventory', () => {
 
   test('That verify user can filter products by Price (low to high)', async ({
     page,
+    inventoryPage,
   }) => {
-    const inventoryPage = new InventoryPage(page);
-    await inventoryPage.verifyPageLoaded();
     // Select Price (low to high)
     await page.getByRole('combobox').selectOption('lohi');
     // Get product names in order
@@ -69,9 +60,8 @@ test.describe('Filter Products in Inventory', () => {
 
   test('That verify user can filter products by Price (high to low)', async ({
     page,
+    inventoryPage,
   }) => {
-    const inventoryPage = new InventoryPage(page);
-    await inventoryPage.verifyPageLoaded();
     // Select Price (high to low)
     await page.getByRole('combobox').selectOption('hilo');
     // Get product names in order

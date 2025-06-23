@@ -1,29 +1,11 @@
-import { test } from '@playwright/test';
-import { LoginPage, InventoryPage, CartPage } from '../pages';
+import { test } from '../fixtures/authenticate';
 import { PRODUCT_NAMES } from '../constants/products';
 
 test.describe('Add to Cart', () => {
-  const productName = {
-    first: /sauce labs backpack/i,
-    second: /sauce labs bike light/i,
-  };
-
-  const PRODUCT_INDEXES = {
-    FIRST: 0,
-    SECOND: 1,
-  };
-
   test('That verify user is able to add multiple products to cart and view them in cart page', async ({
-    page,
+    inventoryPage,
+    cartPage,
   }) => {
-    const loginPage = new LoginPage(page);
-    const inventoryPage = new InventoryPage(page);
-    const cartPage = new CartPage(page);
-
-    // Step 1: Login as standard user
-    await loginPage.login();
-    await inventoryPage.verifyPageLoaded();
-
     // Step 2: Add multiple products to cart using product names
     const productsToAdd = [PRODUCT_NAMES.BACKPACK, PRODUCT_NAMES.BIKE_LIGHT];
 
@@ -48,14 +30,8 @@ test.describe('Add to Cart', () => {
   });
 
   test('That verify user can add and remove specific products', async ({
-    page,
+    inventoryPage,
   }) => {
-    const loginPage = new LoginPage(page);
-    const inventoryPage = new InventoryPage(page);
-
-    await loginPage.login();
-    await inventoryPage.verifyPageLoaded();
-
     // Add product by name
     await inventoryPage.addProductToCartByName(PRODUCT_NAMES.FLEECE_JACKET);
     await inventoryPage.verifyCartBadge('1');

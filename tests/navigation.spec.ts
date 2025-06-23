@@ -1,18 +1,11 @@
-import { test, expect } from '@playwright/test';
-import { LoginPage, InventoryPage } from '../pages';
+import { test, expect } from '../fixtures/authenticate';
 import { PRODUCT_NAMES } from '../constants';
 
 test.describe('Inventory Navigation', () => {
   test('That verify user is able to navigate to all sidebar items and reset app state', async ({
     page,
+    inventoryPage,
   }) => {
-    const loginPage = new LoginPage(page);
-    const inventoryPage = new InventoryPage(page);
-
-    // Step 1: Login as standard user
-    await loginPage.login();
-    await inventoryPage.verifyPageLoaded();
-
     // Step 2: Open sidebar and navigate to About
     await inventoryPage.openSidebar();
     await page.getByRole('link', { name: /about/i }).click();
