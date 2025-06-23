@@ -147,4 +147,10 @@ export class InventoryPage {
   async getProductNamesInOrder(): Promise<string[]> {
     return await this.page.getByTestId('inventory-item-name').allTextContents();
   }
+
+  async logout() {
+    await this.page.getByRole('button', { name: /open menu/i }).click();
+    await this.page.getByRole('link', { name: /logout/i }).click();
+    await expect(this.page).toHaveURL('https://www.saucedemo.com/');
+  }
 }

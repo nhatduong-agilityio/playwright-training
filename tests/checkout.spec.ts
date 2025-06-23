@@ -1,20 +1,14 @@
-import { test } from '@playwright/test';
-import { LoginPage, InventoryPage, CartPage, CheckoutPage } from '../pages';
+import { test } from '../fixtures/authenticate';
 import { PRODUCT_NAMES, CHECKOUT_USER_INFO } from '../constants';
 
 const PRODUCTS = [PRODUCT_NAMES.BACKPACK, PRODUCT_NAMES.BIKE_LIGHT];
 
 test.describe('Checkout Products', () => {
   test('That verify user cannot continue checkout with all information fields empty', async ({
-    page,
+    inventoryPage,
+    cartPage,
+    checkoutPage,
   }) => {
-    const loginPage = new LoginPage(page);
-    const inventoryPage = new InventoryPage(page);
-    const cartPage = new CartPage(page);
-    const checkoutPage = new CheckoutPage(page);
-
-    await loginPage.login();
-    await inventoryPage.verifyPageLoaded();
     await inventoryPage.addProductsToCart(PRODUCTS);
     await inventoryPage.navigateToCart();
     await cartPage.verifyPageLoaded();
@@ -25,15 +19,10 @@ test.describe('Checkout Products', () => {
   });
 
   test('That verify user cannot continue checkout with missing required fields', async ({
-    page,
+    inventoryPage,
+    cartPage,
+    checkoutPage,
   }) => {
-    const loginPage = new LoginPage(page);
-    const inventoryPage = new InventoryPage(page);
-    const cartPage = new CartPage(page);
-    const checkoutPage = new CheckoutPage(page);
-
-    await loginPage.login();
-    await inventoryPage.verifyPageLoaded();
     await inventoryPage.addProductsToCart(PRODUCTS);
     await inventoryPage.navigateToCart();
     await cartPage.verifyPageLoaded();
@@ -86,17 +75,10 @@ test.describe('Checkout Products', () => {
   });
 
   test('That verify user is able to complete checkout with multiple products', async ({
-    page,
+    inventoryPage,
+    cartPage,
+    checkoutPage,
   }) => {
-    const loginPage = new LoginPage(page);
-    const inventoryPage = new InventoryPage(page);
-    const cartPage = new CartPage(page);
-    const checkoutPage = new CheckoutPage(page);
-
-    // Step 1: Login
-    await loginPage.login();
-    await inventoryPage.verifyPageLoaded();
-
     // Step 2: Add products to cart
     await inventoryPage.addProductsToCart(PRODUCTS);
 
