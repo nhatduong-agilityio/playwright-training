@@ -143,4 +143,8 @@ export class InventoryPage {
     await this.verifyCartBadge(products.length.toString());
     await this.verifyRemoveButtonsForProducts(products);
   }
+
+  async getProductNamesInOrder(): Promise<string[]> {
+    return await this.page.getByTestId('inventory-item-name').allTextContents();
+  }
 }
