@@ -135,4 +135,12 @@ export class InventoryPage {
       (await productItem.getByTestId('inventory-item-desc').textContent()) || ''
     );
   }
+
+  // Helper to add products to cart from inventory page
+  async addProductsToCart(inventoryPage: InventoryPage, products: string[]) {
+    await inventoryPage.verifyPageLoaded();
+    await inventoryPage.addMultipleProductsToCart(products);
+    await inventoryPage.verifyCartBadge(products.length.toString());
+    await inventoryPage.verifyRemoveButtonsForProducts(products);
+  }
 }

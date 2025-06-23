@@ -11,3 +11,9 @@ export const PASSWORD = {
   VALID: 'secret_sauce',
   IN_VALID: 'wrong_password',
 };
+
+export const CHECKOUT_USER_INFO = {
+  FIRST_NAME: 'John',
+  LAST_NAME: 'Doe',
+  POSTAL_CODE: '12345',
+};
