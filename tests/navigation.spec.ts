@@ -24,9 +24,7 @@ test.describe('Inventory Navigation', () => {
     // Step 4: Add an item to cart, open sidebar, click Reset App State
     await inventoryPage.addProductToCartByName(PRODUCT_NAMES.FLEECE_JACKET);
     await expect(page.locator('.shopping_cart_badge')).toBeVisible();
-    await inventoryPage.openSidebar();
-    await page.getByRole('link', { name: /reset app state/i }).click();
-    await inventoryPage.closeSidebar();
+    await inventoryPage.resetAppState();
     // Cart badge should disappear (cart is emptied)
     await expect(page.locator('.shopping_cart_badge')).toHaveCount(0);
   });

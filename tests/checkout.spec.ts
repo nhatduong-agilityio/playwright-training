@@ -28,31 +28,25 @@ const missingFieldCases = requiredFields.map(field => {
 });
 
 test.describe('Checkout Products', () => {
-  test('That verify user cannot continue checkout with all information fields empty', async ({
-    inventoryPage,
-    cartPage,
-    checkoutPage,
-  }) => {
+  test.beforeEach(async ({ inventoryPage, cartPage, checkoutPage }) => {
     await inventoryPage.addProductsToCart(PRODUCTS);
     await inventoryPage.navigateToCart();
     await cartPage.verifyPageLoaded();
     await cartPage.proceedToCheckout();
     await checkoutPage.verifyStepOneLoaded();
+  });
+
+  test('That verify user cannot continue checkout with all information fields empty', async ({
+    checkoutPage,
+  }) => {
     await checkoutPage.continue();
     await checkoutPage.verifyErrorMessage('First Name is required');
   });
 
   for (const { filled, expectedError, missingField } of missingFieldCases) {
     test(`That verify user cannot continue checkout with missing required field: ${missingField}`, async ({
-      inventoryPage,
-      cartPage,
       checkoutPage,
     }) => {
-      await inventoryPage.addProductsToCart(PRODUCTS);
-      await inventoryPage.navigateToCart();
-      await cartPage.verifyPageLoaded();
-      await cartPage.proceedToCheckout();
-      await checkoutPage.verifyStepOneLoaded();
       await checkoutPage.fillInfo(filled);
       await checkoutPage.continue();
       await checkoutPage.verifyErrorMessage(expectedError);
@@ -60,30 +54,14 @@ test.describe('Checkout Products', () => {
   }
 
   test('That verify user is able to complete checkout with multiple products', async ({
-    inventoryPage,
-    cartPage,
     checkoutPage,
+    inventoryPage,
   }) => {
-    // Step 2: Add products to cart
-    await inventoryPage.addProductsToCart(PRODUCTS);
-
-    // Step 3: Go to cart and verify items
-    await inventoryPage.navigateToCart();
-    await cartPage.verifyPageLoaded();
-    await cartPage.verifyMultipleCartItemsExist(PRODUCTS);
-
-    // Step 4: Checkout
-    await cartPage.proceedToCheckout();
-    await checkoutPage.verifyStepOneLoaded();
-
-    // Step 5: Fill info and continue
     await checkoutPage.fillInfo(FULL_INFO);
     await checkoutPage.continue();
     await checkoutPage.verifyCheckoutOverviewPageLoaded();
     await checkoutPage.verifyCartItemsCount(PRODUCTS.length);
     await checkoutPage.verifyPaymentAndShippingInfo();
-
-    // Step 6: Finish and verify complete
     await checkoutPage.finish();
     await checkoutPage.verifyCompleteLoaded();
     await inventoryPage.verifyCartBadgeNotVisible();

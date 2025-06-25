@@ -4,8 +4,11 @@ import { BASE_URL, USERS } from '../constants';
 test.describe('Sauce Demo Login', () => {
   const baseUrl = BASE_URL;
 
-  test('should login successfully with valid credentials', async ({ page }) => {
+  test.beforeEach(async ({ page }) => {
     await page.goto(baseUrl);
+  });
+
+  test('should login successfully with valid credentials', async ({ page }) => {
     await page.getByPlaceholder('Username').fill(USERS.STANDARD.username);
     await page.getByPlaceholder('Password').fill(USERS.STANDARD.password);
     await page.getByRole('button', { name: 'Login' }).click();
@@ -14,7 +17,6 @@ test.describe('Sauce Demo Login', () => {
   });
 
   test('should show error with invalid password', async ({ page }) => {
-    await page.goto(baseUrl);
     await page.getByPlaceholder('Username').fill(USERS.INVALID.username);
     await page.getByPlaceholder('Password').fill(USERS.INVALID.password);
     await page.getByRole('button', { name: 'Login' }).click();
@@ -25,7 +27,6 @@ test.describe('Sauce Demo Login', () => {
   });
 
   test('should show error for locked out user', async ({ page }) => {
-    await page.goto(baseUrl);
     await page.getByPlaceholder('Username').fill(USERS.LOCKED.username);
     await page.getByPlaceholder('Password').fill(USERS.LOCKED.password);
     await page.getByRole('button', { name: 'Login' }).click();
@@ -36,7 +37,6 @@ test.describe('Sauce Demo Login', () => {
   });
 
   test('should show error for empty username', async ({ page }) => {
-    await page.goto(baseUrl);
     await page.getByPlaceholder('Password').fill(USERS.STANDARD.password);
     await page.getByRole('button', { name: 'Login' }).click();
     await expect(page.getByTestId('error')).toBeVisible();
@@ -46,7 +46,6 @@ test.describe('Sauce Demo Login', () => {
   });
 
   test('should show error for empty password', async ({ page }) => {
-    await page.goto(baseUrl);
     await page.getByPlaceholder('Username').fill(USERS.STANDARD.username);
     await page.getByRole('button', { name: 'Login' }).click();
     await expect(page.getByTestId('error')).toBeVisible();

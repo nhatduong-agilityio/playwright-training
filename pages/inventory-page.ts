@@ -153,4 +153,10 @@ export class InventoryPage {
     await this.page.getByRole('link', { name: /logout/i }).click();
     await expect(this.page).toHaveURL('https://www.saucedemo.com/');
   }
+
+  async resetAppState() {
+    await this.openSidebar();
+    await this.page.getByRole('link', { name: /reset app state/i }).click();
+    await this.closeSidebar();
+  }
 }

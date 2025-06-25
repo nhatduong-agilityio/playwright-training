@@ -2,7 +2,12 @@ import { test } from '../fixtures/pages';
 import { PRODUCT_NAMES } from '../constants/products';
 
 test.describe('Add to Cart', () => {
+  test.afterEach(async ({ inventoryPage }) => {
+    await inventoryPage.resetAppState();
+  });
+
   test('That verify user is able to add multiple products to cart and view them in cart page', async ({
+    page,
     inventoryPage,
     cartPage,
   }) => {
@@ -27,6 +32,8 @@ test.describe('Add to Cart', () => {
 
     // Verify cart items using product names
     await cartPage.verifyMultipleCartItemsExist(productsToAdd);
+
+    await page.goBack();
   });
 
   test('That verify user can add and remove specific products', async ({
