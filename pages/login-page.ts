@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { BASE_URL, USERNAME, PASSWORD } from '../constants';
+import { BASE_URL, USERS } from '../constants';
 
 export class LoginPage {
   constructor(readonly page: Page) {}
@@ -8,10 +8,10 @@ export class LoginPage {
     await this.page.goto(BASE_URL);
   }
 
-  async login(username = USERNAME.STANDARD, password = PASSWORD.VALID) {
+  async login(user = USERS.STANDARD) {
     await this.goto();
-    await this.page.getByPlaceholder('Username').fill(username);
-    await this.page.getByPlaceholder('Password').fill(password);
+    await this.page.getByPlaceholder('Username').fill(user.username);
+    await this.page.getByPlaceholder('Password').fill(user.password);
     await this.page.getByRole('button', { name: 'Login' }).click();
   }
 }

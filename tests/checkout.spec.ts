@@ -1,4 +1,4 @@
-import { test } from '../fixtures/authenticate';
+import { test } from '../fixtures/pages';
 import { PRODUCT_NAMES, CHECKOUT_USER_INFO } from '../constants';
 
 const PRODUCTS = [PRODUCT_NAMES.BACKPACK, PRODUCT_NAMES.BIKE_LIGHT];

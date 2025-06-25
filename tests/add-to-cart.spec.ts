@@ -1,4 +1,4 @@
-import { test } from '../fixtures/authenticate';
+import { test } from '../fixtures/pages';
 import { PRODUCT_NAMES } from '../constants/products';
 
 test.describe('Add to Cart', () => {
