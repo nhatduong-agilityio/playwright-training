@@ -1,4 +1,4 @@
-import { test, expect } from '../fixtures/authenticate';
+import { test, expect } from '../fixtures/pages';
 import { PRODUCT_NAMES } from '../constants';
 
 test.describe('Inventory Navigation', () => {
