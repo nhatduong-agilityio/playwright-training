@@ -29,3 +29,13 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
+      # Deploy Playwright HTML report to Vercel if tests succeed
+      - name: Install Vercel CLI
+        if: ${{ success() }}
+        run: pnpm add -g vercel
+      - name: Deploy Playwright HTML report to Vercel
+        if: ${{ success() }}
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          vercel --prod --token $VERCEL_TOKEN --confirm --cwd playwright-report --name playwright-report
