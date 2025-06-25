@@ -9,48 +9,68 @@ test.describe('Sauce Demo Login', () => {
   });
 
   test('should login successfully with valid credentials', async ({ page }) => {
-    await page.getByPlaceholder('Username').fill(USERS.STANDARD.username);
-    await page.getByPlaceholder('Password').fill(USERS.STANDARD.password);
-    await page.getByRole('button', { name: 'Login' }).click();
-    await expect(page).toHaveURL(/.*inventory\.html/);
-    await expect(page.getByText('Products')).toBeVisible();
+    await test.step('Fill in valid credentials and submit', async () => {
+      await page.getByPlaceholder('Username').fill(USERS.STANDARD.username);
+      await page.getByPlaceholder('Password').fill(USERS.STANDARD.password);
+      await page.getByRole('button', { name: 'Login' }).click();
+    });
+    await test.step('Verify successful login', async () => {
+      await expect(page).toHaveURL(/.*inventory\.html/);
+      await expect(page.getByText('Products')).toBeVisible();
+    });
   });
 
   test('should show error with invalid password', async ({ page }) => {
-    await page.getByPlaceholder('Username').fill(USERS.INVALID.username);
-    await page.getByPlaceholder('Password').fill(USERS.INVALID.password);
-    await page.getByRole('button', { name: 'Login' }).click();
-    await expect(page.getByTestId('error')).toBeVisible();
-    await expect(page.getByTestId('error')).toContainText(
-      'Username and password do not match'
-    );
+    await test.step('Fill in invalid credentials and submit', async () => {
+      await page.getByPlaceholder('Username').fill(USERS.INVALID.username);
+      await page.getByPlaceholder('Password').fill(USERS.INVALID.password);
+      await page.getByRole('button', { name: 'Login' }).click();
+    });
+    await test.step('Verify error message for invalid credentials', async () => {
+      await expect(page.getByTestId('error')).toBeVisible();
+      await expect(page.getByTestId('error')).toContainText(
+        'Username and password do not match'
+      );
+    });
   });
 
   test('should show error for locked out user', async ({ page }) => {
-    await page.getByPlaceholder('Username').fill(USERS.LOCKED.username);
-    await page.getByPlaceholder('Password').fill(USERS.LOCKED.password);
-    await page.getByRole('button', { name: 'Login' }).click();
-    await expect(page.getByTestId('error')).toBeVisible();
-    await expect(page.getByTestId('error')).toContainText(
-      'Sorry, this user has been locked out.'
-    );
+    await test.step('Fill in locked out user credentials and submit', async () => {
+      await page.getByPlaceholder('Username').fill(USERS.LOCKED.username);
+      await page.getByPlaceholder('Password').fill(USERS.LOCKED.password);
+      await page.getByRole('button', { name: 'Login' }).click();
+    });
+    await test.step('Verify error message for locked out user', async () => {
+      await expect(page.getByTestId('error')).toBeVisible();
+      await expect(page.getByTestId('error')).toContainText(
+        'Sorry, this user has been locked out.'
+      );
+    });
   });
 
   test('should show error for empty username', async ({ page }) => {
-    await page.getByPlaceholder('Password').fill(USERS.STANDARD.password);
-    await page.getByRole('button', { name: 'Login' }).click();
-    await expect(page.getByTestId('error')).toBeVisible();
-    await expect(page.getByTestId('error')).toContainText(
-      'Username is required'
-    );
+    await test.step('Submit with empty username', async () => {
+      await page.getByPlaceholder('Password').fill(USERS.STANDARD.password);
+      await page.getByRole('button', { name: 'Login' }).click();
+    });
+    await test.step('Verify error message for empty username', async () => {
+      await expect(page.getByTestId('error')).toBeVisible();
+      await expect(page.getByTestId('error')).toContainText(
+        'Username is required'
+      );
+    });
   });
 
   test('should show error for empty password', async ({ page }) => {
-    await page.getByPlaceholder('Username').fill(USERS.STANDARD.username);
-    await page.getByRole('button', { name: 'Login' }).click();
-    await expect(page.getByTestId('error')).toBeVisible();
-    await expect(page.getByTestId('error')).toContainText(
-      'Password is required'
-    );
+    await test.step('Submit with empty password', async () => {
+      await page.getByPlaceholder('Username').fill(USERS.STANDARD.username);
+      await page.getByRole('button', { name: 'Login' }).click();
+    });
+    await test.step('Verify error message for empty password', async () => {
+      await expect(page.getByTestId('error')).toBeVisible();
+      await expect(page.getByTestId('error')).toContainText(
+        'Password is required'
+      );
+    });
   });
 });

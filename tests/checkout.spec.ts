@@ -39,17 +39,27 @@ test.describe('Checkout Products', () => {
   test('That verify user cannot continue checkout with all information fields empty', async ({
     checkoutPage,
   }) => {
-    await checkoutPage.continue();
-    await checkoutPage.verifyErrorMessage('First Name is required');
+    await test.step('Try to continue with all fields empty', async () => {
+      await checkoutPage.continue();
+    });
+    await test.step('Verify error message for missing first name', async () => {
+      await checkoutPage.verifyErrorMessage('First Name is required');
+    });
   });
 
   for (const { filled, expectedError, missingField } of missingFieldCases) {
     test(`That verify user cannot continue checkout with missing required field: ${missingField}`, async ({
       checkoutPage,
     }) => {
-      await checkoutPage.fillInfo(filled);
-      await checkoutPage.continue();
-      await checkoutPage.verifyErrorMessage(expectedError);
+      await test.step(`Fill info with missing ${missingField}`, async () => {
+        await checkoutPage.fillInfo(filled);
+      });
+      await test.step('Try to continue', async () => {
+        await checkoutPage.continue();
+      });
+      await test.step('Verify error message', async () => {
+        await checkoutPage.verifyErrorMessage(expectedError);
+      });
     });
   }
 
@@ -57,13 +67,19 @@ test.describe('Checkout Products', () => {
     checkoutPage,
     inventoryPage,
   }) => {
-    await checkoutPage.fillInfo(FULL_INFO);
-    await checkoutPage.continue();
-    await checkoutPage.verifyCheckoutOverviewPageLoaded();
-    await checkoutPage.verifyCartItemsCount(PRODUCTS.length);
-    await checkoutPage.verifyPaymentAndShippingInfo();
-    await checkoutPage.finish();
-    await checkoutPage.verifyCompleteLoaded();
-    await inventoryPage.verifyCartBadgeNotVisible();
+    await test.step('Fill in all required info', async () => {
+      await checkoutPage.fillInfo(FULL_INFO);
+    });
+    await test.step('Continue to overview', async () => {
+      await checkoutPage.continue();
+      await checkoutPage.verifyCheckoutOverviewPageLoaded();
+      await checkoutPage.verifyCartItemsCount(PRODUCTS.length);
+      await checkoutPage.verifyPaymentAndShippingInfo();
+    });
+    await test.step('Finish checkout and verify complete', async () => {
+      await checkoutPage.finish();
+      await checkoutPage.verifyCompleteLoaded();
+      await inventoryPage.verifyCartBadgeNotVisible();
+    });
   });
 });

@@ -11,48 +11,51 @@ test.describe('Add to Cart', () => {
     inventoryPage,
     cartPage,
   }) => {
-    // Step 2: Add multiple products to cart using product names
     const productsToAdd = [PRODUCT_NAMES.BACKPACK, PRODUCT_NAMES.BIKE_LIGHT];
 
-    // Verify products exist before adding
-    await inventoryPage.verifyMultipleProductsExist(productsToAdd);
+    await test.step('Verify products exist before adding', async () => {
+      await inventoryPage.verifyMultipleProductsExist(productsToAdd);
+    });
 
-    // Add products to cart by name
-    await inventoryPage.addMultipleProductsToCart(productsToAdd);
+    await test.step('Add products to cart by name', async () => {
+      await inventoryPage.addMultipleProductsToCart(productsToAdd);
+    });
 
-    // Verify cart badge shows correct count
-    await inventoryPage.verifyCartBadge('2');
+    await test.step('Verify cart badge shows correct count', async () => {
+      await inventoryPage.verifyCartBadge('2');
+    });
 
-    // Verify remove buttons are visible for added products
-    await inventoryPage.verifyRemoveButtonsForProducts(productsToAdd);
+    await test.step('Verify remove buttons are visible for added products', async () => {
+      await inventoryPage.verifyRemoveButtonsForProducts(productsToAdd);
+    });
 
-    // Step 3: Navigate to cart and verify items
-    await inventoryPage.navigateToCart();
-    await cartPage.verifyPageLoaded();
-
-    // Verify cart items using product names
-    await cartPage.verifyMultipleCartItemsExist(productsToAdd);
-
-    await page.goBack();
+    await test.step('Navigate to cart and verify items', async () => {
+      await inventoryPage.navigateToCart();
+      await cartPage.verifyPageLoaded();
+      await cartPage.verifyMultipleCartItemsExist(productsToAdd);
+      await page.goBack();
+    });
   });
 
   test('That verify user can add and remove specific products', async ({
     inventoryPage,
   }) => {
-    // Add product by name
-    await inventoryPage.addProductToCartByName(PRODUCT_NAMES.FLEECE_JACKET);
-    await inventoryPage.verifyCartBadge('1');
-    await inventoryPage.verifyRemoveButtonForProduct(
-      PRODUCT_NAMES.FLEECE_JACKET
-    );
+    await test.step('Add product by name', async () => {
+      await inventoryPage.addProductToCartByName(PRODUCT_NAMES.FLEECE_JACKET);
+      await inventoryPage.verifyCartBadge('1');
+      await inventoryPage.verifyRemoveButtonForProduct(
+        PRODUCT_NAMES.FLEECE_JACKET
+      );
+    });
 
-    // Remove product from inventory page
-    await inventoryPage.removeProductFromCartByName(
-      PRODUCT_NAMES.FLEECE_JACKET
-    );
-    await inventoryPage.verifyCartBadgeNotVisible();
-    await inventoryPage.verifyAddToCartButtonForProduct(
-      PRODUCT_NAMES.FLEECE_JACKET
-    );
+    await test.step('Remove product from inventory page', async () => {
+      await inventoryPage.removeProductFromCartByName(
+        PRODUCT_NAMES.FLEECE_JACKET
+      );
+      await inventoryPage.verifyCartBadgeNotVisible();
+      await inventoryPage.verifyAddToCartButtonForProduct(
+        PRODUCT_NAMES.FLEECE_JACKET
+      );
+    });
   });
 });
