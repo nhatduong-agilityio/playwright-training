@@ -9,8 +9,14 @@ setup('authenticate', async ({ page }) => {
   const inventoryPage = new InventoryPage(page);
 
   await loginPage.goto();
-  await loginPage.login(USERS.STANDARD);
-  await inventoryPage.verifyPageLoaded();
+
+  await setup.step('Fill in valid credentials and submit', async () => {
+    await loginPage.login(USERS.STANDARD);
+  });
+
+  await setup.step('Verify successful login', async () => {
+    await inventoryPage.verifyPageLoaded();
+  });
 
   await page.context().storageState({ path: authFile });
 });
