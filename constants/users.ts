@@ -1,15 +1,14 @@
-export const USERNAME = {
-  STANDARD: 'standard_user',
-  LOCKED: 'locked_out_user',
-  PROBLEM: 'problem_user',
-  PERFORMANCE: 'performance_glitch_user',
-  ERROR: 'error_user',
-  VISUAL: 'visual_user',
-};
-
-export const PASSWORD = {
-  VALID: 'secret_sauce',
-  IN_VALID: 'wrong_password',
+export const USERS = {
+  STANDARD: { username: 'standard_user', password: 'secret_sauce' },
+  LOCKED: { username: 'locked_out_user', password: 'secret_sauce' },
+  PROBLEM: { username: 'problem_user', password: 'secret_sauce' },
+  PERFORMANCE: {
+    username: 'performance_glitch_user',
+    password: 'secret_sauce',
+  },
+  ERROR: { username: 'error_user', password: 'secret_sauce' },
+  VISUAL: { username: 'visual_user', password: 'secret_sauce' },
+  INVALID: { username: 'standard_user', password: 'wrong_password' },
 };
 
 export const CHECKOUT_USER_INFO = {
