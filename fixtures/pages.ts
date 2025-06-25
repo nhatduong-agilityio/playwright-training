@@ -1,6 +1,6 @@
 import { test as base, expect } from '@playwright/test';
-import { InventoryPage, CartPage, CheckoutPage } from '../pages';
-import { INVENTORY_URL } from '../constants';
+import { InventoryPage, CartPage, CheckoutPage } from '@/pages';
+import { INVENTORY_URL } from '@/constants';
 
 /**
  * Custom Playwright fixtures for page objects.

@@ -1,5 +1,5 @@
-import { test, expect } from '../fixtures/pages';
-import { PRODUCT_NAMES } from '../constants/products';
+import { test, expect } from '@/fixtures/pages';
+import { PRODUCT_NAMES } from '@/constants';
 
 const ALL_PRODUCTS = [
   PRODUCT_NAMES.BACKPACK,

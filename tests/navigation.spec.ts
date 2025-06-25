@@ -1,5 +1,5 @@
-import { test, expect } from '../fixtures/pages';
-import { PRODUCT_NAMES } from '../constants';
+import { test, expect } from '@/fixtures/pages';
+import { PRODUCT_NAMES } from '@/constants';
 
 test.describe('Inventory Navigation', () => {
   test('That verify user is able to navigate to all sidebar items and reset app state', async ({

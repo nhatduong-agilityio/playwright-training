@@ -1,5 +1,5 @@
-import { test } from '../fixtures/pages';
-import { PRODUCT_NAMES, CHECKOUT_USER_INFO } from '../constants';
+import { test } from '@/fixtures/pages';
+import { PRODUCT_NAMES, CHECKOUT_USER_INFO } from '@/constants';
 
 const PRODUCTS = [PRODUCT_NAMES.BACKPACK, PRODUCT_NAMES.BIKE_LIGHT];
 
@@ -9,7 +9,7 @@ const FULL_INFO = {
   postalCode: CHECKOUT_USER_INFO.POSTAL_CODE,
 };
 
-const requiredFields = ['firstName', 'lastName', 'postalCode'];
+const requiredFields = ['firstName', 'lastName', 'postalCode'] as const;
 const errorMessages = {
   firstName: 'First Name is required',
   lastName: 'Last Name is required',

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { BASE_URL, USERS } from '../constants';
+import { BASE_URL, USERS } from '@/constants';
 
 test.describe('Sauce Demo Login', () => {
   const baseUrl = BASE_URL;

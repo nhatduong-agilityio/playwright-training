@@ -1,5 +1,5 @@
-import { test } from '../fixtures/pages';
-import { PRODUCT_NAMES } from '../constants/products';
+import { test } from '@/fixtures/pages';
+import { PRODUCT_NAMES } from '@/constants';
 
 test.describe('Add to Cart', () => {
   test.afterEach(async ({ inventoryPage }) => {

@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { BASE_URL, USERS } from '../constants';
+import { BASE_URL, USERS } from '@/constants';
 
 /**
  * Page Object Model for the Login page.
