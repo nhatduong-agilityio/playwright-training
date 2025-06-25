@@ -1,5 +1,5 @@
-import { test, expect } from '../fixtures/pages';
-import { PRODUCT_NAMES } from '../constants/products';
+import { test, expect } from '@/fixtures/pages';
+import { PRODUCT_NAMES } from '@/constants';
 
 const ALL_PRODUCTS = [
   PRODUCT_NAMES.BACKPACK,
@@ -24,51 +24,59 @@ test.describe('Filter Products in Inventory', () => {
     page,
     inventoryPage,
   }) => {
-    // Select Name (A to Z)
-    await page.getByRole('combobox').selectOption('az');
-    // Get product names in order
-    const productNames = await inventoryPage.getProductNamesInOrder();
-    const expected = [...ALL_PRODUCTS].sort();
-    expect(productNames).toEqual(expected);
+    await test.step('Select Name (A to Z)', async () => {
+      await page.getByRole('combobox').selectOption('az');
+    });
+    await test.step('Get and verify product names in order', async () => {
+      const productNames = await inventoryPage.getProductNamesInOrder();
+      const expected = [...ALL_PRODUCTS].sort();
+      expect(productNames).toEqual(expected);
+    });
   });
 
   test('That verify user can filter products by Name (Z to A)', async ({
     page,
     inventoryPage,
   }) => {
-    // Select Name (Z to A)
-    await page.getByRole('combobox').selectOption('za');
-    // Get product names in order
-    const productNames = await inventoryPage.getProductNamesInOrder();
-    const expected = [...ALL_PRODUCTS].sort().reverse();
-    expect(productNames).toEqual(expected);
+    await test.step('Select Name (Z to A)', async () => {
+      await page.getByRole('combobox').selectOption('za');
+    });
+    await test.step('Get and verify product names in order', async () => {
+      const productNames = await inventoryPage.getProductNamesInOrder();
+      const expected = [...ALL_PRODUCTS].sort().reverse();
+      expect(productNames).toEqual(expected);
+    });
   });
 
   test('That verify user can filter products by Price (low to high)', async ({
     page,
     inventoryPage,
   }) => {
-    // Select Price (low to high)
-    await page.getByRole('combobox').selectOption('lohi');
-    // Get product names in order
-    const productNames = await inventoryPage.getProductNamesInOrder();
-    const expected = [...ALL_PRODUCTS].sort(
-      (a, b) => PRODUCT_PRICES[a] - PRODUCT_PRICES[b]
-    );
-    expect(productNames).toEqual(expected);
+    await test.step('Select Price (low to high)', async () => {
+      await page.getByRole('combobox').selectOption('lohi');
+    });
+    await test.step('Get and verify product names in order', async () => {
+      const productNames = await inventoryPage.getProductNamesInOrder();
+      const expected = [...ALL_PRODUCTS].sort(
+        (a, b) => PRODUCT_PRICES[a] - PRODUCT_PRICES[b]
+      );
+      expect(productNames).toEqual(expected);
+    });
   });
 
   test('That verify user can filter products by Price (high to low)', async ({
     page,
     inventoryPage,
   }) => {
-    // Select Price (high to low)
-    await page.getByRole('combobox').selectOption('hilo');
-    // Get product names in order
-    const productNames = await inventoryPage.getProductNamesInOrder();
-    const expected = [...ALL_PRODUCTS].sort(
-      (a, b) => PRODUCT_PRICES[b] - PRODUCT_PRICES[a]
-    );
-    expect(productNames).toEqual(expected);
+    await test.step('Select Price (high to low)', async () => {
+      await page.getByRole('combobox').selectOption('hilo');
+    });
+    await test.step('Get and verify product names in order', async () => {
+      const productNames = await inventoryPage.getProductNamesInOrder();
+      const expected = [...ALL_PRODUCTS].sort(
+        (a, b) => PRODUCT_PRICES[b] - PRODUCT_PRICES[a]
+      );
+      expect(productNames).toEqual(expected);
+    });
   });
 });
