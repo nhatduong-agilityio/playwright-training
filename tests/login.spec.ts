@@ -1,18 +1,20 @@
-import { test, expect } from '@playwright/test';
-import { BASE_URL, USERS } from '@/constants';
+import { test, expect } from '@/fixtures/pages';
+import { USERS } from '@/constants';
+
+// Reset storage state for this file to avoid being authenticated
+test.use({ storageState: { cookies: [], origins: [] } });
 
 test.describe('Sauce Demo Login', () => {
-  const baseUrl = BASE_URL;
-
-  test.beforeEach(async ({ page }) => {
-    await page.goto(baseUrl);
+  test.beforeEach(async ({ loginPage }) => {
+    await loginPage.goto();
   });
 
-  test('should login successfully with valid credentials', async ({ page }) => {
-    await test.step('Fill in valid credentials and submit', async () => {
-      await page.getByPlaceholder('Username').fill(USERS.STANDARD.username);
-      await page.getByPlaceholder('Password').fill(USERS.STANDARD.password);
-      await page.getByRole('button', { name: 'Login' }).click();
+  test('should login successfully with valid credentials', async ({
+    loginPage,
+    page,
+  }) => {
+    await test.step('Fill valid credentials and submit', async () => {
+      await loginPage.login();
     });
     await test.step('Verify successful login', async () => {
       await expect(page).toHaveURL(/.*inventory\.html/);
@@ -20,11 +22,12 @@ test.describe('Sauce Demo Login', () => {
     });
   });
 
-  test('should show error with invalid password', async ({ page }) => {
+  test('should show error with invalid password', async ({
+    page,
+    loginPage,
+  }) => {
     await test.step('Fill in invalid credentials and submit', async () => {
-      await page.getByPlaceholder('Username').fill(USERS.INVALID.username);
-      await page.getByPlaceholder('Password').fill(USERS.INVALID.password);
-      await page.getByRole('button', { name: 'Login' }).click();
+      await loginPage.login(USERS.INVALID);
     });
     await test.step('Verify error message for invalid credentials', async () => {
       await expect(page.getByTestId('error')).toBeVisible();
@@ -34,11 +37,9 @@ test.describe('Sauce Demo Login', () => {
     });
   });
 
-  test('should show error for locked out user', async ({ page }) => {
+  test('should show error for locked out user', async ({ page, loginPage }) => {
     await test.step('Fill in locked out user credentials and submit', async () => {
-      await page.getByPlaceholder('Username').fill(USERS.LOCKED.username);
-      await page.getByPlaceholder('Password').fill(USERS.LOCKED.password);
-      await page.getByRole('button', { name: 'Login' }).click();
+      await loginPage.login(USERS.LOCKED);
     });
     await test.step('Verify error message for locked out user', async () => {
       await expect(page.getByTestId('error')).toBeVisible();

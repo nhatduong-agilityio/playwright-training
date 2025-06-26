@@ -1,4 +1,5 @@
 import { expect, Page, Locator } from '@playwright/test';
+import { INVENTORY_URL } from '@/constants';
 
 /**
  * Page Object Model for the Inventory page.
@@ -245,5 +246,20 @@ export class InventoryPage {
     await this.openSidebar();
     await this.page.getByRole('link', { name: /reset app state/i }).click();
     await this.closeSidebar();
+  }
+
+  /**
+   * Selects a sort option from the inventory page.
+   * @param option The sort option to select
+   */
+  async selectSortOption(option: string) {
+    await this.page.getByRole('combobox').selectOption(option);
+  }
+
+  /**
+   * Navigates to the inventory page using INVENTORY_URL.
+   */
+  async goto() {
+    await this.page.goto(INVENTORY_URL);
   }
 }

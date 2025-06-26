@@ -24,8 +24,8 @@ test.describe('Filter Products in Inventory', () => {
     page,
     inventoryPage,
   }) => {
-    await test.step('Select Name (A to Z)', async () => {
-      await page.getByRole('combobox').selectOption('az');
+    await test.step('Select sort option A-Z', async () => {
+      await inventoryPage.selectSortOption('az');
     });
     await test.step('Get and verify product names in order', async () => {
       const productNames = await inventoryPage.getProductNamesInOrder();
@@ -35,11 +35,10 @@ test.describe('Filter Products in Inventory', () => {
   });
 
   test('That verify user can filter products by Name (Z to A)', async ({
-    page,
     inventoryPage,
   }) => {
-    await test.step('Select Name (Z to A)', async () => {
-      await page.getByRole('combobox').selectOption('za');
+    await test.step('Select sort option Z-A', async () => {
+      await inventoryPage.selectSortOption('za');
     });
     await test.step('Get and verify product names in order', async () => {
       const productNames = await inventoryPage.getProductNamesInOrder();
@@ -49,11 +48,10 @@ test.describe('Filter Products in Inventory', () => {
   });
 
   test('That verify user can filter products by Price (low to high)', async ({
-    page,
     inventoryPage,
   }) => {
-    await test.step('Select Price (low to high)', async () => {
-      await page.getByRole('combobox').selectOption('lohi');
+    await test.step('Select sort option Low-High', async () => {
+      await inventoryPage.selectSortOption('lohi');
     });
     await test.step('Get and verify product names in order', async () => {
       const productNames = await inventoryPage.getProductNamesInOrder();
@@ -65,11 +63,10 @@ test.describe('Filter Products in Inventory', () => {
   });
 
   test('That verify user can filter products by Price (high to low)', async ({
-    page,
     inventoryPage,
   }) => {
-    await test.step('Select Price (high to low)', async () => {
-      await page.getByRole('combobox').selectOption('hilo');
+    await test.step('Select sort option High-Low', async () => {
+      await inventoryPage.selectSortOption('hilo');
     });
     await test.step('Get and verify product names in order', async () => {
       const productNames = await inventoryPage.getProductNamesInOrder();

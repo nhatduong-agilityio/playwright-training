@@ -1,12 +1,12 @@
 import { test as base, expect } from '@playwright/test';
-import { InventoryPage, CartPage, CheckoutPage } from '@/pages';
-import { INVENTORY_URL } from '@/constants';
+import { InventoryPage, CartPage, CheckoutPage, LoginPage } from '@/pages';
 
 /**
  * Custom Playwright fixtures for page objects.
  * Provides InventoryPage, CartPage, and CheckoutPage instances for tests.
  */
 interface PageFixtures {
+  loginPage: LoginPage;
   /** Inventory page object */
   inventoryPage: InventoryPage;
   /** Cart page object */
@@ -28,7 +28,7 @@ const test = base.extend<PageFixtures>({
   inventoryPage: async ({ page }, use) => {
     const inventoryPage = new InventoryPage(page);
     // Navigate to inventory page since all authenticated tests start here
-    await page.goto(INVENTORY_URL);
+    await inventoryPage.goto();
     await inventoryPage.verifyPageLoaded();
     await use(inventoryPage);
   },
@@ -45,6 +45,13 @@ const test = base.extend<PageFixtures>({
    */
   checkoutPage: async ({ page }, use) => {
     await use(new CheckoutPage(page));
+  },
+  /**
+   * LoginPage fixture.
+   * Provides a LoginPage instance.
+   */
+  loginPage: async ({ page }, use) => {
+    await use(new LoginPage(page));
   },
 });
 

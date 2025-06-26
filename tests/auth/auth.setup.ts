@@ -2,7 +2,7 @@ import { test as setup } from '@playwright/test';
 import { LoginPage, InventoryPage } from '@/pages';
 import { USERS } from '@/constants';
 
-const authFile = 'playwright/.auth/user.json';
+const authFile = '.auth/user.json';
 
 setup('authenticate', async ({ page }) => {
   const loginPage = new LoginPage(page);
@@ -10,7 +10,7 @@ setup('authenticate', async ({ page }) => {
 
   await loginPage.goto();
 
-  await setup.step('Fill in valid credentials and submit', async () => {
+  await setup.step('Fill valid credentials and submit', async () => {
     await loginPage.login(USERS.STANDARD);
   });
 
