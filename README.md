@@ -1,10 +1,10 @@
 # Playwright Training Project
 
-This document provides an overview of the Playwright training system, detailing technical requirements, business requirements, and best practices for end-to-end testing with Playwright.
+This document presents a comprehensive training plan for the Playwright practice, detailing targets and ETA for practice advanced.
 
 ## Timeline
 
-- 1 week
+- 5 days
 
 ## Features
 
@@ -14,9 +14,9 @@ This project includes:
 - ⚡ TypeScript for type safety
 - 🧪 Test scenarios for:
   - Login
-  - Navigation
-  - Add to cart
-  - Checkout
+  - CURD (Create, Update, Read, Delete) for collection users
+  - Sort users on the table
+  - Search users on the table
 - ✅ Assertions for clear expectations
 - 🛠️ Debugging tools: Trace Viewer, Inspector, logs
 - 📏 Linter with [ESLint](https://eslint.org/)
@@ -42,6 +42,7 @@ This project includes:
 ```bash
 git clone <repository-url>
 cd training-playwright
+git checkout practice-advanced
 ```
 
 ### 2. Install Dependencies
