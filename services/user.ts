@@ -20,8 +20,7 @@ export const userService = {
     return await api.get(request, `${USERS_PATH}${query}`);
   },
   search: async (request: APIRequestContext, keyword: string) =>
-    await api.get(
-      request,
-      `${USERS_PATH}?filter=${encodeURIComponent(keyword)}`
-    ),
+    await api.get(request, `${USERS_PATH}?filter=${keyword}`),
+  sort: async (request: APIRequestContext, sortBy: string) =>
+    await api.get(request, `${USERS_PATH}?sort=${sortBy}`),
 };
