@@ -1,6 +1,6 @@
 export const USERS = {
   admin: { email: 'admin@example.com', password: 'admin123' },
-  test: { email: 'test@example.com', password: 'test123' },
+  test: { email: 'test@example.com', password: '123456' },
 };
 
 export const TEST_USER_EMAIL = 'testuser@example.com';

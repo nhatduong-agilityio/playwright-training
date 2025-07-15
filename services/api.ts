@@ -1,5 +1,5 @@
 import { APIRequestContext, APIResponse } from '@playwright/test';
-import { BASE_URL } from '@/constants';
+import { API_URL } from '@/constants';
 
 const getHeaders = () => {
   const token = process.env.API_BEARER_TOKEN;
@@ -19,13 +19,13 @@ const getHeaders = () => {
 
 export const api = {
   get: async (request: APIRequestContext, path: string): Promise<APIResponse> =>
-    await request.get(`${BASE_URL}/${path}`, { headers: getHeaders() }),
+    await request.get(`${API_URL}/${path}`, { headers: getHeaders() }),
   post: async <T>(
     request: APIRequestContext,
     path: string,
     data: T
   ): Promise<APIResponse> =>
-    await request.post(`${BASE_URL}/${path}`, {
+    await request.post(`${API_URL}/${path}`, {
       data,
       headers: getHeaders(),
     }),
@@ -34,7 +34,7 @@ export const api = {
     path: string,
     data: T
   ): Promise<APIResponse> =>
-    await request.put(`${BASE_URL}/${path}`, {
+    await request.put(`${API_URL}/${path}`, {
       data,
       headers: getHeaders(),
     }),
@@ -43,7 +43,7 @@ export const api = {
     path: string,
     data: T
   ): Promise<APIResponse> =>
-    await request.patch(`${BASE_URL}/${path}`, {
+    await request.patch(`${API_URL}/${path}`, {
       data,
       headers: getHeaders(),
     }),
@@ -51,7 +51,7 @@ export const api = {
     request: APIRequestContext,
     path: string
   ): Promise<APIResponse> =>
-    await request.delete(`${BASE_URL}/${path}`, {
+    await request.delete(`${API_URL}/${path}`, {
       headers: getHeaders(),
     }),
 };

@@ -38,14 +38,14 @@ export default defineConfig({
   projects: [
     // Setup project for authentication
     { name: 'setup', testMatch: /.*\.setup\.ts/ },
-    // {
-    //   name: 'chromium',
-    //   use: {
-    //     ...devices['Desktop Chrome'],
-    //     storageState: '.auth/user.json',
-    //   },
-    //   dependencies: ['setup'],
-    // },
+    {
+      name: 'chromium',
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: '.auth/user.json',
+      },
+      dependencies: ['setup'],
+    },
     // {
     //   name: 'firefox',
     //   use: {
