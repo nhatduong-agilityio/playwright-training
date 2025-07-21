@@ -9,7 +9,7 @@ import { BASE_URL } from '@/constants';
  * @returns {string} The access token, or an empty string if not found.
  */
 export const extractAccessToken = (): string => {
-  const authFile = path.resolve(__dirname, '../tests/auth/.auth/user.json');
+  const authFile = path.resolve(__dirname, '../tests/auth/user.json');
 
   try {
     if (!fs.existsSync(authFile)) {
