@@ -19,6 +19,7 @@ export class DashboardPage {
   readonly refreshButton: Locator;
   readonly closeButton: Locator;
   readonly modalConfirmYesButton: Locator;
+  readonly deleteSelectedButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -60,6 +61,9 @@ export class DashboardPage {
     this.modalConfirmYesButton = this.container.getByRole('button', {
       name: 'Yes',
     });
+    this.deleteSelectedButton = this.page
+      .frameLocator('iframe')
+      .getByRole('button', { name: 'Delete selected' });
   }
 
   /**
@@ -126,7 +130,7 @@ export class DashboardPage {
    * @param email - The email of the user to verify.
    */
   async verifyUserIsCreated(email: string) {
-    const userLocator = this.page
+    const userLocator = await this.page
       .frameLocator('iframe')
       .getByRole('row', { name: email });
     await expect(userLocator).toBeVisible();
@@ -186,5 +190,46 @@ export class DashboardPage {
     if (await confirmModal.isVisible()) {
       await this.modalConfirmYesButton.click();
     }
+  }
+
+  /**
+   * Deletes a user record by clicking the checkbox next to the user and
+   * clicking the "Delete selected" button. The method will confirm any
+   * modal that appears.
+   * @param userId - The ID of the user to delete.
+   */
+  async deleteUserRecord(userId: string) {
+    const userLocator = await this.page
+      .frameLocator('iframe')
+      .getByRole('row', { name: userId });
+
+    await userLocator
+      .locator(`.form-field label[for="checkbox_${userId}"]`)
+      .click();
+
+    await this.deleteSelectedButton.click();
+    await this.modalConfirmYesButton.click();
+  }
+
+  /**
+   * Verifies that a user with the specified ID is not visible in the
+   * table. The method will fail if the user is still visible.
+   * @param userId - The ID of the user to verify.
+   */
+  async verifyUserIsDeleted(userId: string) {
+    const userLocator = await this.page
+      .frameLocator('iframe')
+      .getByRole('row', { name: userId });
+    await expect(userLocator).not.toBeVisible();
+  }
+
+  /**
+   * Verifies that the given message is displayed in the toast message.
+   * @param message - The message to verify in the toast message.
+   */
+  async verifyToastMessageVisible(message: string) {
+    await expect(
+      this.page.frameLocator('iframe').getByText(message)
+    ).toBeVisible();
   }
 }
