@@ -6,6 +6,7 @@ import { defineConfig, devices } from '@playwright/test';
  */
 import * as dotenv from 'dotenv';
 import * as path from 'path';
+import { BASE_URL } from './constants';
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 /**
@@ -30,9 +31,13 @@ export default defineConfig({
     // baseURL: 'http://localhost:3000',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+    baseURL: BASE_URL,
     trace: 'on-first-retry',
-    testIdAttribute: 'data-test',
+    extraHTTPHeaders: {
+      Accept: 'application/json',
+    },
   },
+  timeout: 100 * 1000,
 
   /* Configure projects for major browsers */
   projects: [
@@ -42,7 +47,7 @@ export default defineConfig({
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-        storageState: '.auth/user.json',
+        storageState: './tests/auth/user.json',
       },
       dependencies: ['setup'],
     },
@@ -65,6 +70,10 @@ export default defineConfig({
     {
       name: 'API',
       testMatch: /.*api\/.*\.spec\.ts/,
+      use: {
+        storageState: './tests/auth/user.json',
+      },
+      dependencies: ['setup'],
     },
   ],
 });

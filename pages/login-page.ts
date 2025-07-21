@@ -51,7 +51,7 @@ export class LoginPage {
    * Verifies that the given message is displayed in the toast message.
    * @param message - The message to verify in the toast message.
    */
-  async verifyToastMessage(message: string) {
+  async verifyToastMessageVisible(message: string) {
     await expect(
       this.page.frameLocator('iframe').getByText(message)
     ).toBeVisible();
@@ -61,7 +61,7 @@ export class LoginPage {
    * Verifies that the "Please fill out this field." validation message is visible when
    * attempting to log in with empty fields.
    */
-  async verifyLeaveFieldsEmpty() {
+  async verifyEmptyFieldValidationError() {
     const validationMessage = await this.emailInput.evaluate(
       (el: HTMLInputElement) => el.validationMessage
     );

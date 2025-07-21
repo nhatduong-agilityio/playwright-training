@@ -1,25 +1,9 @@
 import { APIRequestContext, APIResponse } from '@playwright/test';
 import { API_URL } from '@/constants';
 
-const getHeaders = () => {
-  const token = process.env.API_BEARER_TOKEN;
-  const headers = {
-    'Content-Type': 'application/json',
-  };
-
-  if (token) {
-    return {
-      ...headers,
-      Authorization: `Bearer ${token}`,
-    };
-  }
-
-  return headers;
-};
-
 export const api = {
   get: async (request: APIRequestContext, path: string): Promise<APIResponse> =>
-    await request.get(`${API_URL}/${path}`, { headers: getHeaders() }),
+    await request.get(`${API_URL}/${path}`),
   post: async <T>(
     request: APIRequestContext,
     path: string,
@@ -27,7 +11,6 @@ export const api = {
   ): Promise<APIResponse> =>
     await request.post(`${API_URL}/${path}`, {
       data,
-      headers: getHeaders(),
     }),
   put: async <T>(
     request: APIRequestContext,
@@ -36,7 +19,6 @@ export const api = {
   ): Promise<APIResponse> =>
     await request.put(`${API_URL}/${path}`, {
       data,
-      headers: getHeaders(),
     }),
   patch: async <T>(
     request: APIRequestContext,
@@ -45,13 +27,9 @@ export const api = {
   ): Promise<APIResponse> =>
     await request.patch(`${API_URL}/${path}`, {
       data,
-      headers: getHeaders(),
     }),
   delete: async (
     request: APIRequestContext,
     path: string
-  ): Promise<APIResponse> =>
-    await request.delete(`${API_URL}/${path}`, {
-      headers: getHeaders(),
-    }),
+  ): Promise<APIResponse> => await request.delete(`${API_URL}/${path}`),
 };

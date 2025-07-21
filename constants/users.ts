@@ -8,7 +8,7 @@ export const TEST_USER_EMAIL = 'testuser@example.com';
 export const VALID_USER = {
   email: () => `testuser_${Date.now()}@example.com`,
   password: 'Test1234!',
-  username: 'testuser',
+  username: () => `testuser_${Date.now()}`,
   name: 'Test User',
 };
 
