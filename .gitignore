@@ -45,3 +45,4 @@ node_modules/
 /playwright/.cache/
 
 .auth
+tests/auth/user.json

@@ -27,17 +27,17 @@ test.describe('Login', () => {
       await loginPage.loginAs(USERS.admin.email, 'wrongpass');
     });
     await test.step('Verify error message is visible', async () => {
-      await loginPage.verifyToastMessage('Invalid login credentials');
+      await loginPage.verifyToastMessageVisible('Invalid login credentials');
       await loginPage.verifyAmOnLoginPage();
     });
   });
 
-  test('Error is shown for empty login fields', async ({ loginPage, page }) => {
+  test('Error is shown for empty login fields', async ({ loginPage }) => {
     await test.step('Leave fields blank and attempt login', async () => {
       await loginPage.loginAs('', '');
     });
     await test.step('Verify validation error is visible', async () => {
-      await loginPage.verifyLeaveFieldsEmpty();
+      await loginPage.verifyEmptyFieldValidationError();
       await loginPage.verifyAmOnLoginPage();
     });
   });
