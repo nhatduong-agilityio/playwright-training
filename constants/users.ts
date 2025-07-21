@@ -14,9 +14,9 @@ export const VALID_USER = {
 
 export const INVALID_USERS = {
   empty: { email: '', password: '' },
-  badEmail: { email: 'not-an-email', password: 'Test1234!' },
+  badEmail: { email: 'not-an-email@gmail', password: 'Test1234!' },
   mismatchedPassword: {
-    email: () => `testuser_${Date.now()}@example.com`,
+    email: () => `testuser-${Date.now()}@example.com`,
     password: 'Test1234!',
     passwordConfirm: 'Test5678!',
   },
