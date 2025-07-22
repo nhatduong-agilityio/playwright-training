@@ -3,8 +3,6 @@ export const USERS = {
   test: { email: 'test@example.com', password: '123456' },
 };
 
-export const TEST_USER_EMAIL = 'testuser@example.com';
-
 export const VALID_USER = {
   email: () => `testuser_${Date.now()}@example.com`,
   password: 'Test1234!',

@@ -20,6 +20,7 @@ export class DashboardPage {
   readonly closeButton: Locator;
   readonly modalConfirmYesButton: Locator;
   readonly deleteSelectedButton: Locator;
+  readonly saveChangesButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -64,6 +65,9 @@ export class DashboardPage {
     this.deleteSelectedButton = this.page
       .frameLocator('iframe')
       .getByRole('button', { name: 'Delete selected' });
+    this.saveChangesButton = this.container.getByRole('button', {
+      name: 'Save changes',
+    });
   }
 
   /**
@@ -137,12 +141,10 @@ export class DashboardPage {
     await expect(userLocator).toContainText(email);
   }
 
-  /*************  ✨ Windsurf Command ⭐  *************/
   /**
    * Refreshes the user table.
    * @throws {Error} If the refresh button is not visible.
    */
-  /*******  6c88b70b-f46a-4f30-808a-d3fe27d48f35  *******/
   async refreshTable() {
     await this.refreshButton.click();
   }
@@ -231,5 +233,73 @@ export class DashboardPage {
     await expect(
       this.page.frameLocator('iframe').getByText(message)
     ).toBeVisible();
+  }
+
+  /**
+   * Opens the details view for a user record by clicking the right arrow
+   * icon in the table row with the specified user ID.
+   * @param userId - The ID of the user to open the details view for.
+   */
+  async viewUserDetails(userId: string) {
+    const userLocator = await this.page
+      .frameLocator('iframe')
+      .getByRole('row', { name: userId });
+
+    const actionArrow = await userLocator.locator(
+      'td.col-type-action i.ri-arrow-right-line'
+    );
+
+    await actionArrow.click();
+  }
+
+  /**
+   * Verifies that the details of a user are visible in the container.
+   * Checks for the presence of user's email, username, name, website, and avatar.
+   * @param user - The user record containing details to verify.
+   */
+  async verifyUserDetails(user: UserRecord) {
+    const { email, username, name } = user;
+
+    if (email) {
+      await expect(this.emailInput).toHaveValue(email);
+    }
+    if (username) {
+      await expect(this.usernameInput).toHaveValue(username);
+    }
+    if (name) {
+      await expect(this.nameInput).toHaveValue(name);
+    }
+  }
+
+  /**
+   * Updates the user record with the specified details.
+   * Fills in the username and name fields with the provided values
+   * and clicks the 'Save changes' button to apply the updates.
+   *
+   * @param newUser - An object containing the new user details.
+   * @param newUser.username - (Optional) The new username for the user.
+   * @param newUser.name - (Optional) The new name for the user.
+   */
+  async updateUserRecord(newUser: {
+    email?: string;
+    username?: string;
+    name?: string;
+  }) {
+    const { email, username, name } = newUser;
+
+    if (email) {
+      await this.emailInput.click();
+      await this.emailInput.fill(email);
+    }
+    if (username) {
+      await this.usernameInput.click();
+      await this.usernameInput.fill(username);
+    }
+    if (name) {
+      await this.nameInput.click();
+      await this.nameInput.fill(name);
+    }
+
+    await this.saveChangesButton.click();
   }
 }
