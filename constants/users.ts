@@ -4,9 +4,9 @@ export const USERS = {
 };
 
 export const VALID_USER = {
-  email: () => `user_${Date.now()}@example.com`,
+  email: `user_${Date.now()}@example.com`,
   password: 'User1234!',
-  username: () => `user_${Date.now()}`,
+  username: `user_${Date.now()}`,
   name: 'User Name',
 };
 

@@ -1,56 +1,45 @@
 import { createUserAction, deleteUserAction } from '@/actions';
 import { USERS_PATH, VALID_USER } from '@/constants';
 import { test } from '@/fixtures';
+import { UserRecord } from '@/types';
 import { waitForResponseFromMethodGet } from '@/utils';
 import { expect } from '@playwright/test';
 
 test.describe('Read User Record', () => {
-  let userId: string | undefined;
-  let email: string;
-
-  test.beforeEach(async ({ apiContext, dashboardPage }) => {
-    await dashboardPage.goto();
-    await dashboardPage.verifyAmOnDashboardPage();
-
-    email = VALID_USER.email();
-    const userResponse = await createUserAction(apiContext, {
-      email,
-      password: VALID_USER.password,
-      passwordConfirm: VALID_USER.password,
-      username: VALID_USER.username(),
-      name: VALID_USER.name,
-      emailVisibility: true,
+  test.beforeEach(async ({ userContext, dashboardPage }) => {
+    await test.step('Go to dashboard', async () => {
+      await dashboardPage.goto();
+      await dashboardPage.verifyAmOnDashboardPage();
     });
-    const user = await userResponse.json();
-    userId = user.id;
 
-    await dashboardPage.refreshTable();
-    await dashboardPage.verifyUserIsCreated(email);
+    await test.step('Refresh table', async () => {
+      await dashboardPage.refreshTable();
+      await dashboardPage.verifyUserIsCreated(userContext[0].email);
+    });
   });
 
-  test.afterEach(async ({ dashboardPage, apiContext }) => {
-    if (userId) {
-      await dashboardPage.closeFormContainer();
-      await deleteUserAction(apiContext, userId);
-      await dashboardPage.refreshTable();
-      userId = undefined;
-    }
+  test.afterEach(async ({ dashboardPage }) => {
+    await dashboardPage.closeFormContainer();
   });
 
   test('That verify user can view details of an existing user', async ({
     dashboardPage,
+    userContext,
     page,
   }) => {
-    if (!userId) {
-      throw new Error('User is not defined');
-    }
-    const [response] = await Promise.all([
-      waitForResponseFromMethodGet({ page, url: USERS_PATH }),
-      dashboardPage.viewUserDetails(userId),
-    ]);
-    const responseBody = await response.json();
+    let userDetail: UserRecord | undefined;
 
-    expect(response.status()).toBe(200);
-    await dashboardPage.verifyUserDetails(responseBody);
+    await test.step('View user details', async () => {
+      const [response] = await Promise.all([
+        waitForResponseFromMethodGet({ page, url: USERS_PATH }),
+        dashboardPage.viewUserDetails(userContext[0].id!),
+      ]);
+      userDetail = await response.json();
+      expect(response.status()).toBe(200);
+    });
+
+    await test.step('Verify user details', async () => {
+      await dashboardPage.verifyUserDetails(userDetail!);
+    });
   });
 });

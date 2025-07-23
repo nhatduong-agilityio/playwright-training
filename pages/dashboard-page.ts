@@ -326,7 +326,8 @@ export class DashboardPage {
     const userRow = await this.page
       .frameLocator('iframe')
       .getByRole('row')
-      .filter({ hasText: column });
+      .filter({ hasText: column })
+      .first();
 
     await userRow.click();
   }

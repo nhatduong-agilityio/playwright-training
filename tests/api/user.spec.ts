@@ -22,7 +22,7 @@ test.describe('User Management API', () => {
   });
 
   test('Create user with valid data', async ({ apiContext }) => {
-    const email = VALID_USER.email();
+    const email = VALID_USER.email;
 
     await test.step('Send create user request with valid data', async () => {
       const response = await createUserAction(apiContext, {
@@ -52,7 +52,7 @@ test.describe('User Management API', () => {
   });
 
   test('View user details', async ({ apiContext }) => {
-    const email = VALID_USER.email();
+    const email = VALID_USER.email;
     let user: UserRecord;
     await test.step('Create user for details view', async () => {
       const createRes = await createUserAction(apiContext, {
@@ -83,7 +83,7 @@ test.describe('User Management API', () => {
   });
 
   test('Edit user with valid data', async ({ apiContext }) => {
-    const email = VALID_USER.email();
+    const email = VALID_USER.email;
     let user: UserRecord;
     await test.step('Create user for update', async () => {
       const createRes = await createUserAction(apiContext, {
@@ -110,7 +110,7 @@ test.describe('User Management API', () => {
   });
 
   test('Edit user with invalid data (bad email)', async ({ apiContext }) => {
-    const email = VALID_USER.email();
+    const email = VALID_USER.email;
     let user: UserRecord;
     await test.step('Create user for invalid update', async () => {
       const createRes = await createUserAction(apiContext, {
@@ -136,7 +136,7 @@ test.describe('User Management API', () => {
   });
 
   test('Delete user', async ({ apiContext }) => {
-    const email = VALID_USER.email();
+    const email = VALID_USER.email;
     let user: UserRecord;
     await test.step('Create user for deletion', async () => {
       const createRes = await createUserAction(apiContext, {
@@ -175,7 +175,7 @@ test.describe('User Management API', () => {
   });
 
   test('Search users by keyword', async ({ apiContext }) => {
-    const email = VALID_USER.email();
+    const email = VALID_USER.email;
     let user: UserRecord;
     await test.step('Create user for search', async () => {
       const createRes = await createUserAction(apiContext, {
