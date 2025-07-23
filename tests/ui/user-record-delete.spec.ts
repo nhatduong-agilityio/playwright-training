@@ -1,53 +1,47 @@
-import { createUserAction } from '@/actions';
-import { USERS_PATH, VALID_USER } from '@/constants';
+import { USERS_PATH } from '@/constants';
 import { test } from '@/fixtures';
 import { waitForResponseFromMethodDelete } from '@/utils';
 import { expect } from '@playwright/test';
 
 test.describe('Delete User Record', () => {
-  let userId: string | undefined;
-  let email: string;
-
-  test.beforeEach(async ({ apiContext, dashboardPage }) => {
-    await dashboardPage.goto();
-    await dashboardPage.verifyAmOnDashboardPage();
-
-    email = VALID_USER.email();
-    const userResponse = await createUserAction(apiContext, {
-      email,
-      password: VALID_USER.password,
-      passwordConfirm: VALID_USER.password,
-      username: VALID_USER.username(),
-      name: VALID_USER.name,
-      emailVisibility: true,
+  test.beforeEach(async ({ dashboardPage, userContext }) => {
+    await test.step('Go to dashboard', async () => {
+      await dashboardPage.goto();
+      await dashboardPage.verifyAmOnDashboardPage();
     });
-    const user = await userResponse.json();
-    userId = user.id;
 
-    await dashboardPage.refreshTable();
-    await dashboardPage.verifyUserIsCreated(email);
+    await test.step('Refresh table', async () => {
+      await dashboardPage.refreshTable();
+      await dashboardPage.verifyUserIsCreated(userContext[0].email);
+    });
   });
 
   test.afterEach(async ({ dashboardPage }) => {
-    if (userId) {
-      await dashboardPage.refreshTable();
-      userId = undefined;
-    }
+    await dashboardPage.refreshTable();
   });
 
   test('That verify user can delete an existing user record', async ({
     dashboardPage,
+    userContext,
     page,
   }) => {
-    const [deleteResponse] = await Promise.all([
-      waitForResponseFromMethodDelete({ page, url: USERS_PATH, id: userId! }),
-      dashboardPage.deleteUserRecord(userId!),
-    ]);
+    await test.step('Delete user record', async () => {
+      const [deleteResponse] = await Promise.all([
+        waitForResponseFromMethodDelete({
+          page,
+          url: USERS_PATH,
+          id: userContext[0].id!,
+        }),
+        dashboardPage.deleteUserRecord(userContext[0].id!),
+      ]);
+      expect(deleteResponse.status()).toBe(204);
+    });
 
-    expect(deleteResponse.status()).toBe(204);
-    await dashboardPage.verifyUserIsDeleted(userId!);
-    await dashboardPage.verifyToastMessageVisible(
-      'Successfully deleted the selected record.'
-    );
+    await test.step('Verify user record is deleted', async () => {
+      await dashboardPage.verifyUserIsDeleted(userContext[0].id!);
+      await dashboardPage.verifyToastMessageVisible(
+        'Successfully deleted the selected record.'
+      );
+    });
   });
 });

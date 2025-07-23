@@ -21,8 +21,8 @@ export const createMultipleUsers = async (
     const uniqueSuffix = specialString
       ? `_number${i}${specialString}`
       : `_number${i}`;
-    const email = VALID_USER.email().replace('@', `_number${i}@`);
-    const username = `${VALID_USER.username()}_number${i}`;
+    const email = VALID_USER.email.replace('@', `_number${i}@`);
+    const username = `${VALID_USER.username}_number${i}`;
     const name = `${VALID_USER.name} ${uniqueSuffix}`;
 
     return createUserAction(request, {

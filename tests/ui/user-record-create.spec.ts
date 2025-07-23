@@ -41,7 +41,7 @@ test.describe('Create User Record', () => {
   let email: string;
 
   test.beforeEach(async ({ dashboardPage }) => {
-    email = VALID_USER.email();
+    email = VALID_USER.email;
     await dashboardPage.goto();
     await dashboardPage.verifyAmOnDashboardPage();
     await dashboardPage.createNewRecord();
@@ -67,7 +67,7 @@ test.describe('Create User Record', () => {
       dashboardPage.createUser({
         email,
         password: VALID_USER.password,
-        username: VALID_USER.username(),
+        username: VALID_USER.username,
         name: VALID_USER.name,
         emailVisibility: true,
       }),

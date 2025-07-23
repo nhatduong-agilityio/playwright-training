@@ -1,8 +1,6 @@
-import { createUserAction, deleteUserAction } from '@/actions';
-import { USERS_PATH, VALID_USER } from '@/constants';
+import { USERS_PATH } from '@/constants';
 import { test } from '@/fixtures';
-import { UserRecord } from '@/types';
-import { createMultipleUsers, waitForResponseFromMethodGet } from '@/utils';
+import { waitForResponseFromMethodGet } from '@/utils';
 import { expect } from '@playwright/test';
 
 const FIELDS: Array<
@@ -10,29 +8,19 @@ const FIELDS: Array<
 > = ['id', 'email', 'username', 'name', 'created', 'updated'];
 
 test.describe('Sort User Records', () => {
-  let createdUsers: UserRecord[] = [];
-
-  test.beforeEach(async ({ apiContext, dashboardPage }) => {
-    await dashboardPage.goto();
-    await dashboardPage.verifyAmOnDashboardPage();
-
-    // Create three test users
-    createdUsers = await createMultipleUsers(apiContext, 3);
-
-    await dashboardPage.refreshTable();
+  test.beforeEach(async ({ multiUserContext, dashboardPage }) => {
+    await test.step('Go to dashboard', async () => {
+      await dashboardPage.goto();
+      await dashboardPage.verifyAmOnDashboardPage();
+    });
 
     await test.step('Verify users are created', async () => {
-      for (const user of createdUsers) {
+      await dashboardPage.refreshTable();
+
+      for (const user of multiUserContext) {
         await dashboardPage.verifyUserIsCreated(user.email);
       }
     });
-  });
-
-  test.afterEach(async ({ apiContext }) => {
-    for (const user of createdUsers) {
-      await deleteUserAction(apiContext, user.id!);
-    }
-    createdUsers = [];
   });
 
   // Parameterized validation tests
