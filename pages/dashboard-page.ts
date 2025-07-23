@@ -21,6 +21,9 @@ export class DashboardPage {
   readonly modalConfirmYesButton: Locator;
   readonly deleteSelectedButton: Locator;
   readonly saveChangesButton: Locator;
+  readonly searchInput: Locator;
+  readonly submitSearchButton: Locator;
+  readonly clearSearchButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -68,6 +71,18 @@ export class DashboardPage {
     this.saveChangesButton = this.container.getByRole('button', {
       name: 'Save changes',
     });
+    this.searchInput = this.page
+      .frameLocator('iframe')
+      .locator('form.searchbar')
+      .getByRole('textbox');
+    this.submitSearchButton = this.page
+      .frameLocator('iframe')
+      .locator('form.searchbar')
+      .getByRole('button', { name: 'Search' });
+    this.clearSearchButton = this.page
+      .frameLocator('iframe')
+      .locator('form.searchbar')
+      .getByRole('button', { name: 'Clear' });
   }
 
   /**
@@ -381,5 +396,59 @@ export class DashboardPage {
 
     // Verify sorting
     await this.verifyUserIsSorted({ field, order: expectedOrder });
+  }
+
+  /**
+   * Searches for users by a keyword.
+   * @param keyword - The keyword to search for in user records.
+   */
+  async searchUsersByKeyword(keyword: string) {
+    await this.searchInput.fill(keyword);
+
+    await this.submitSearchButton.click();
+  }
+
+  /**
+   * Clears the search input and triggers a new search query.
+   * The method clicks the 'Clear search' button, which resets the search input
+   * and performs a new search query without any keyword.
+   */
+  async clearSearch() {
+    await this.clearSearchButton.click();
+  }
+
+  /**
+   * Verifies that the search results contain the specified keyword.
+   * Filters the given response body for user records that match the keyword
+   * in their email, username, or name, and asserts that there is at least
+   * one match. Additionally, checks the UI to ensure that the search results
+   * are visible and contain entries matching the keyword.
+   *
+   * @param users - The list of user records returned from the search.
+   * @param keyword - The keyword to verify in the search results.
+   * @throws {Error} If no matching records are found in the response body or UI.
+   */
+
+  async verifySearchResultsContainKeyword(
+    users: UserRecord[],
+    keyword: string
+  ) {
+    const results = users.filter(
+      (user: UserRecord) =>
+        user.email.includes(keyword) ||
+        user.username?.includes(keyword) ||
+        user.name?.includes(keyword)
+    );
+    expect(results.length).toBeGreaterThan(0);
+
+    const searchResults = this.page
+      .frameLocator('iframe')
+      .getByRole('row')
+      .filter({ hasText: keyword })
+      .first();
+
+    const resultsCount = await searchResults.count();
+    await expect(searchResults).toBeVisible();
+    await expect(resultsCount).toBeGreaterThan(0);
   }
 }

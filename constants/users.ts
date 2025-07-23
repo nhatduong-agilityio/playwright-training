@@ -4,10 +4,10 @@ export const USERS = {
 };
 
 export const VALID_USER = {
-  email: () => `testuser_${Date.now()}@example.com`,
-  password: 'Test1234!',
-  username: () => `testuser_${Date.now()}`,
-  name: 'Test User',
+  email: () => `user_${Date.now()}@example.com`,
+  password: 'User1234!',
+  username: () => `user_${Date.now()}`,
+  name: 'User Name',
 };
 
 export const INVALID_USERS = {

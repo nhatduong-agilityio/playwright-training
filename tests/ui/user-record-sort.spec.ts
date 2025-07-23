@@ -9,7 +9,7 @@ const FIELDS: Array<
   'id' | 'email' | 'username' | 'name' | 'created' | 'updated'
 > = ['id', 'email', 'username', 'name', 'created', 'updated'];
 
-test.describe('Sort Users', () => {
+test.describe('Sort User Records', () => {
   let createdUsers: UserRecord[] = [];
 
   test.beforeEach(async ({ apiContext, dashboardPage }) => {
