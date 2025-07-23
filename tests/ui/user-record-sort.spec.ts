@@ -8,7 +8,7 @@ const FIELDS: Array<
 > = ['id', 'email', 'username', 'name', 'created', 'updated'];
 
 test.describe('Sort User Records', () => {
-  test.beforeEach(async ({ multiUserContext, dashboardPage }) => {
+  test.beforeEach(async ({ userContext, dashboardPage }) => {
     await test.step('Go to dashboard', async () => {
       await dashboardPage.goto();
       await dashboardPage.verifyAmOnDashboardPage();
@@ -17,7 +17,7 @@ test.describe('Sort User Records', () => {
     await test.step('Verify users are created', async () => {
       await dashboardPage.refreshTable();
 
-      for (const user of multiUserContext) {
+      for (const user of userContext) {
         await dashboardPage.verifyUserIsCreated(user.email);
       }
     });
