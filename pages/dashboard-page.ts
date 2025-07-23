@@ -302,4 +302,84 @@ export class DashboardPage {
 
     await this.saveChangesButton.click();
   }
+
+  /**
+   * Sorts the user records in the table by clicking the specified column header.
+   * @param column - The column header to click for sorting.
+   */
+  async sortByColumnHeader(column: string) {
+    const userRow = await this.page
+      .frameLocator('iframe')
+      .getByRole('row')
+      .filter({ hasText: column });
+
+    await userRow.click();
+  }
+
+  /**
+   * Verifies that the user records in the table are sorted correctly by a specified field.
+   * The method checks the sorting order (ascending or descending) based on the provided options.
+   *
+   * @param options - The sorting options.
+   * @param options.field - The column field to verify sorting for ('id', 'email', 'username', 'name', 'created', or 'updated').
+   * @param options.order - The expected order of sorting ('asc' for ascending or 'desc' for descending).
+   *
+   * @throws {Error} If the actual sorting order does not match the expected order.
+   */
+
+  async verifyUserIsSorted(options: {
+    field: 'id' | 'email' | 'username' | 'name' | 'created' | 'updated';
+    order: 'asc' | 'desc';
+  }) {
+    const { field, order } = options;
+
+    const cells = this.page
+      .frameLocator('iframe')
+      .getByRole('cell')
+      .locator(`.col-field-${field}`);
+
+    let values = await cells.allTextContents();
+
+    // Clean values
+    values = values.map(value => value.trim());
+
+    // Create expected sorted array
+    const expectedValues = [...values];
+
+    // Sort based on field type
+    if (field === 'created' || field === 'updated') {
+      // Date sorting
+      expectedValues.sort((a, b) => {
+        const dateA = new Date(a);
+        const dateB = new Date(b);
+        const comparison = dateA.getTime() - dateB.getTime();
+        return order === 'asc' ? comparison : -comparison;
+      });
+    } else {
+      // Text sorting
+      expectedValues.sort((a, b) => {
+        const comparison = a.localeCompare(b);
+        return order === 'asc' ? comparison : -comparison;
+      });
+    }
+
+    // Verify sorting
+    expect(values).toEqual(expectedValues);
+  }
+
+  /**
+   * Sorts the table by the specified column and verifies that the
+   * sorting is correct.
+   * @param field - The column to sort by.
+   * @param expectedOrder - The expected sorting order ('asc' or 'desc').
+   */
+  async sortAndVerify(
+    field: 'id' | 'email' | 'username' | 'name' | 'created' | 'updated',
+    expectedOrder: 'asc' | 'desc'
+  ) {
+    await this.sortByColumnHeader(field);
+
+    // Verify sorting
+    await this.verifyUserIsSorted({ field, order: expectedOrder });
+  }
 }
