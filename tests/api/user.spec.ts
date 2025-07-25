@@ -2,21 +2,21 @@ import { test } from '@/fixtures';
 import { expect } from '@playwright/test';
 import { VALID_USER, INVALID_USERS } from '@/constants';
 import {
-  createUserAction,
-  deleteUserAction,
-  getUserAction,
-  searchUserAction,
-  sortUsersAction,
-  updateUserAction,
+  createUser,
+  deleteUser,
+  getUser,
+  searchUser,
+  sortUsers,
+  updateUser,
 } from '@/actions';
-import { UserRecord } from '@/types';
+import { User } from '@/types';
 
 test.describe('User Management API', () => {
   let createdUserId: string | undefined;
 
   test.afterEach(async ({ apiContext }) => {
     if (createdUserId) {
-      await deleteUserAction(apiContext, createdUserId);
+      await deleteUser(apiContext, createdUserId);
       createdUserId = undefined;
     }
   });
@@ -25,7 +25,7 @@ test.describe('User Management API', () => {
     const email = VALID_USER.email;
 
     await test.step('Send create user request with valid data', async () => {
-      const response = await createUserAction(apiContext, {
+      const response = await createUser(apiContext, {
         email,
         password: VALID_USER.password,
         passwordConfirm: VALID_USER.password,
@@ -44,7 +44,7 @@ test.describe('User Management API', () => {
   }) => {
     let res, body;
     await test.step('Send create user request with empty fields', async () => {
-      res = await createUserAction(apiContext, INVALID_USERS.empty);
+      res = await createUser(apiContext, INVALID_USERS.empty);
       expect(res.ok()).toBeFalsy();
       body = await res.json();
       expect(body).toHaveProperty('data');
@@ -53,9 +53,9 @@ test.describe('User Management API', () => {
 
   test('View user details', async ({ apiContext }) => {
     const email = VALID_USER.email;
-    let user: UserRecord;
+    let user: User;
     await test.step('Create user for details view', async () => {
-      const createRes = await createUserAction(apiContext, {
+      const createRes = await createUser(apiContext, {
         email,
         password: VALID_USER.password,
         passwordConfirm: VALID_USER.password,
@@ -74,7 +74,7 @@ test.describe('User Management API', () => {
       if (!user.id) {
         throw new Error('User ID is undefined');
       }
-      const res = await getUserAction(apiContext, user.id);
+      const res = await getUser(apiContext, user.id);
 
       expect(res.ok()).toBeTruthy();
       const body = await res.json();
@@ -84,9 +84,9 @@ test.describe('User Management API', () => {
 
   test('Edit user with valid data', async ({ apiContext }) => {
     const email = VALID_USER.email;
-    let user: UserRecord;
+    let user: User;
     await test.step('Create user for update', async () => {
-      const createRes = await createUserAction(apiContext, {
+      const createRes = await createUser(apiContext, {
         email,
         password: VALID_USER.password,
         passwordConfirm: VALID_USER.password,
@@ -99,7 +99,7 @@ test.describe('User Management API', () => {
       if (!user.id) {
         throw new Error('User ID is undefined');
       }
-      const res = await updateUserAction(apiContext, user.id, {
+      const res = await updateUser(apiContext, user.id, {
         ...user,
         name: 'Updated User',
       });
@@ -111,9 +111,9 @@ test.describe('User Management API', () => {
 
   test('Edit user with invalid data (bad email)', async ({ apiContext }) => {
     const email = VALID_USER.email;
-    let user: UserRecord;
+    let user: User;
     await test.step('Create user for invalid update', async () => {
-      const createRes = await createUserAction(apiContext, {
+      const createRes = await createUser(apiContext, {
         email,
         password: VALID_USER.password,
         passwordConfirm: VALID_USER.password,
@@ -126,7 +126,7 @@ test.describe('User Management API', () => {
       if (!user.id) {
         throw new Error('User ID is undefined');
       }
-      const res = await updateUserAction(apiContext, user.id, {
+      const res = await updateUser(apiContext, user.id, {
         email: INVALID_USERS.badEmail.email,
       });
       expect(res.ok()).toBeFalsy();
@@ -137,9 +137,9 @@ test.describe('User Management API', () => {
 
   test('Delete user', async ({ apiContext }) => {
     const email = VALID_USER.email;
-    let user: UserRecord;
+    let user: User;
     await test.step('Create user for deletion', async () => {
-      const createRes = await createUserAction(apiContext, {
+      const createRes = await createUser(apiContext, {
         email,
         password: VALID_USER.password,
         passwordConfirm: VALID_USER.password,
@@ -152,7 +152,7 @@ test.describe('User Management API', () => {
         throw new Error('User ID is undefined');
       }
 
-      const res = await deleteUserAction(apiContext, user.id);
+      const res = await deleteUser(apiContext, user.id);
       expect(res.ok()).toBeTruthy();
     });
     await test.step('Verify user is deleted', async () => {
@@ -160,14 +160,14 @@ test.describe('User Management API', () => {
         throw new Error('User ID is undefined');
       }
 
-      const getRes = await getUserAction(apiContext, user.id);
+      const getRes = await getUser(apiContext, user.id);
       expect(getRes.status()).toBe(404);
     });
   });
 
   test('Sort users by column', async ({ apiContext }) => {
     await test.step('Request users sorted by email', async () => {
-      const res = await sortUsersAction(apiContext, '-email');
+      const res = await sortUsers(apiContext, '-email');
       expect(res.ok()).toBeTruthy();
       const body = await res.json();
       expect(Array.isArray(body.items)).toBeTruthy();
@@ -176,9 +176,9 @@ test.describe('User Management API', () => {
 
   test('Search users by keyword', async ({ apiContext }) => {
     const email = VALID_USER.email;
-    let user: UserRecord;
+    let user: User;
     await test.step('Create user for search', async () => {
-      const createRes = await createUserAction(apiContext, {
+      const createRes = await createUser(apiContext, {
         email,
         password: VALID_USER.password,
         passwordConfirm: VALID_USER.password,
@@ -188,11 +188,11 @@ test.describe('User Management API', () => {
       createdUserId = user.id;
     });
     await test.step('Search for user by email', async () => {
-      const res = await searchUserAction(apiContext, email);
+      const res = await searchUser(apiContext, email);
       expect(res.ok()).toBeTruthy();
       const body = await res.json();
       expect(
-        body.items.some((u: UserRecord) => u.email === email)
+        body.items.some((u: User) => u.email === email)
       ).toBeTruthy();
     });
   });

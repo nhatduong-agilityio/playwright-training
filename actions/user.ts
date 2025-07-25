@@ -1,25 +1,23 @@
-import { APIRequestContext } from '@playwright/test';
+import { APIRequestContext, APIResponse } from '@playwright/test';
 import { userService } from '@/services';
-import { UserRecord } from '@/types';
+import { User } from '@/types';
+import { getEncodedUserSearchFilter } from '@/utils';
 
 /**
  * Creates a user record in the database.
  *
  * @param {APIRequestContext} request - The context of the API request.
- * @param {UserRecord} user - The user record to be created.
+ * @param {User} user - The user record to be created.
  *
- * @returns {Promise<UserRecord>} The created user record.
+ * @returns {Promise<User>} The created user record.
  *
  * @throws {Error} If the action fails.
  */
-export const createUserAction = async (
-  request: APIRequestContext,
-  user: UserRecord
-) => {
+export const createUser = async (request: APIRequestContext, user: User) => {
   try {
     return await userService.create(request, user);
   } catch (error) {
-    console.error('Create user action failed:', error);
+    console.error('Create user failed:', error);
     throw error;
   }
 };
@@ -30,19 +28,16 @@ export const createUserAction = async (
  * @param {APIRequestContext} request - The context of the API request.
  * @param {string} userId - The ID of the user to be retrieved.
  *
- * @returns {Promise<UserRecord>} The user record with the specified ID.
+ * @returns {Promise<User>} The user record with the specified ID.
  *
  * @throws {Error} If the action fails.
  */
 
-export const getUserAction = async (
-  request: APIRequestContext,
-  userId: string
-) => {
+export const getUser = async (request: APIRequestContext, userId: string) => {
   try {
     return await userService.getById(request, userId);
   } catch (error) {
-    console.error('Get user action failed:', error);
+    console.error('Get user failed:', error);
     throw error;
   }
 };
@@ -52,22 +47,22 @@ export const getUserAction = async (
  *
  * @param {APIRequestContext} request - The context of the API request.
  * @param {string} userId - The ID of the user to be updated.
- * @param {UserRecord} updates - The updates to be applied to the user record.
+ * @param {User} updates - The updates to be applied to the user record.
  *
- * @returns {Promise<UserRecord>} The updated user record.
+ * @returns {Promise<User>} The updated user record.
  *
  * @throws {Error} If the action fails.
  */
 
-export const updateUserAction = async (
+export const updateUser = async (
   request: APIRequestContext,
   userId: string,
-  updates: UserRecord
+  updates: User
 ) => {
   try {
     return await userService.update(request, userId, updates);
   } catch (error) {
-    console.error('Update user action failed:', error);
+    console.error('Update user failed:', error);
     throw error;
   }
 };
@@ -82,14 +77,14 @@ export const updateUserAction = async (
  *
  * @throws {Error} If the action fails.
  */
-export const deleteUserAction = async (
+export const deleteUser = async (
   request: APIRequestContext,
   userId: string
 ) => {
   try {
     return await userService.delete(request, userId);
   } catch (error) {
-    console.error('Delete user action failed:', error);
+    console.error('Delete user failed:', error);
     throw error;
   }
 };
@@ -98,41 +93,21 @@ export const deleteUserAction = async (
  * Searches for user records based on a keyword.
  *
  * @param {APIRequestContext} request - The context of the API request.
- * @param {string} keyword - The keyword to search for in user records.
+ * @param {string} encodedKeyword - The keyword to search for in user records.
  *
- * @returns {Promise<any>} A promise that resolves with the search results.
+ * @returns {Promise<APIResponse>} A promise that resolves with the search results.
  *
  * @throws {Error} If the search action fails.
  */
-
-export const searchUserAction = async (
+export const searchUser = async (
   request: APIRequestContext,
   encodedKeyword: string
 ) => {
   try {
-    // Filter across all user fields
-    const filterConditions = [
-      `id~"${encodedKeyword}"`,
-      `email~"${encodedKeyword}"`,
-      `username~"${encodedKeyword}"`,
-      `name~"${encodedKeyword}"`,
-      `password~"${encodedKeyword}"`,
-      `tokenKey~"${encodedKeyword}"`,
-      `emailVisibility~"${encodedKeyword}"`,
-      `verified~"${encodedKeyword}"`,
-      `avatar~"${encodedKeyword}"`,
-      `website~"${encodedKeyword}"`,
-      `created~"${encodedKeyword}"`,
-      `updated~"${encodedKeyword}"`,
-    ];
-
-    // Join all conditions with OR (||)
-    const filter = filterConditions.join('||');
-    const encodedFilter = encodeURIComponent(filter);
-
+    const encodedFilter = getEncodedUserSearchFilter(encodedKeyword);
     return await userService.search(request, encodedFilter);
   } catch (error) {
-    console.error('Search user action failed:', error);
+    console.error('Search user failed:', error);
     throw error;
   }
 };
@@ -143,18 +118,15 @@ export const searchUserAction = async (
  * @param {APIRequestContext} request - The context of the API request.
  * @param {string} sortBy - The column to sort by.
  *
- * @returns {Promise<any>} A promise that resolves with the sorted list of user records.
+ * @returns {Promise<APIResponse>} A promise that resolves with the sorted list of user records.
  *
  * @throws {Error} If the sort action fails.
  */
-export const sortUsersAction = async (
-  request: APIRequestContext,
-  sortBy: string
-) => {
+export const sortUsers = async (request: APIRequestContext, sortBy: string) => {
   try {
     return await userService.sort(request, sortBy);
   } catch (error) {
-    console.error('Sort users action failed:', error);
+    console.error('Sort users failed:', error);
     throw error;
   }
 };

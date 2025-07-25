@@ -1,6 +1,7 @@
 import { expect, Locator, Page } from '@playwright/test';
 import { BASE_URL } from '@/constants';
-import { UserRecord } from '@/types';
+import { Table, User } from '@/types';
+import { EMAIL_REQUIRED_ERROR } from '@/constants';
 
 export class DashboardPage {
   readonly page: Page;
@@ -86,18 +87,16 @@ export class DashboardPage {
   }
 
   /**
-   * Navigates to the users page using the base URL from environment or default.
+   * Navigates to the dashboard page using the base URL.
    */
   async goto() {
     await this.page.goto(BASE_URL);
   }
 
   /**
-   * Verifies that the user is logged in and the 'Logged superuser menu'
-   * button is visible.
-   * @throws {Error} if the button is not visible.
+   * Asserts that the dashboard page is loaded by checking for the superuser menu button.
    */
-  async verifyAmOnDashboardPage() {
+  async expectOnDashboard() {
     await expect(
       this.page
         .frameLocator('iframe')
@@ -106,20 +105,10 @@ export class DashboardPage {
   }
 
   /**
-   * Creates a new user by clicking the 'New record' button.
+   * Fills and submits the user creation form with the provided user data.
+   * @param user - The user data to submit.
    */
-  async createNewRecord() {
-    await this.newRecordButton.click();
-  }
-
-  /**
-   * Creates a new user with the provided details.
-   * @param email - The user's email address.
-   * @param password - The user's password.
-   * @param username - (Optional) The user's username.
-   * @param name - (Optional) The user's name.
-   */
-  async createUser(user: UserRecord) {
+  async submitUserForm(user: User) {
     const {
       email,
       password,
@@ -127,10 +116,7 @@ export class DashboardPage {
       name,
       passwordConfirm,
       emailVisibility,
-      website,
-      avatar,
     } = user;
-
     await this.emailInput.fill(email);
     if (emailVisibility) await this.emailToggleButton.click();
     if (password) {
@@ -140,141 +126,52 @@ export class DashboardPage {
     }
     if (username) await this.usernameInput.fill(username);
     if (name) await this.nameInput.fill(name);
-
     await this.createButton.click();
   }
 
   /**
-   * Verifies that a user with the specified email is created.
-   * @param email - The email of the user to verify.
+   * Asserts that a field shows the given error message.
+   * @param message - The expected error message.
+   * @param locator - The locator for the field or container.
    */
-  async verifyUserIsCreated(email: string) {
-    const userLocator = await this.page
-      .frameLocator('iframe')
-      .getByRole('row', { name: email });
-    await expect(userLocator).toBeVisible();
-    await expect(userLocator).toContainText(email);
+  async expectFieldError(message: string, locator: Locator) {
+    if (message === EMAIL_REQUIRED_ERROR) {
+      const validationMessage = await locator.evaluate(
+        (el: HTMLInputElement) => el.validationMessage
+      );
+      await expect(validationMessage).toBe(message);
+    } else {
+      await expect(this.container.getByText(message)).toBeVisible();
+    }
   }
 
   /**
-   * Refreshes the user table.
-   * @throws {Error} If the refresh button is not visible.
+   * Closes the user form and confirms any modal if present.
    */
-  async refreshTable() {
-    await this.refreshButton.click();
-  }
-
-  /**
-   * Verifies that the email field has a validation error and the
-   * validation message is "Please fill out this field.".
-   */
-  async verifyEmailFieldValidationError() {
-    const validationMessage = await this.emailInput.evaluate(
-      (el: HTMLInputElement) => el.validationMessage
-    );
-
-    await expect(validationMessage).toBe('Please fill out this field.');
-  }
-
-  /**
-   * Verifies that the email field has a validation error and the
-   * validation message is "Must be a valid email address.".
-   */
-  async verifyEmailFieldIsInvalid() {
-    await expect(
-      this.container.getByText('Must be a valid email address.')
-    ).toBeVisible();
-  }
-
-  /**
-   * Verifies that the password confirmation field has a validation error
-   * and the validation message is "Values don't match.".
-   */
-  async verifyPasswordConfirmationError() {
-    await expect(this.container.getByText(`Values don't match.`)).toBeVisible();
-  }
-
-  /**
-   * Closes the form container and confirms any modal that appears.
-   * If the modal is visible, it will be confirmed, otherwise the method
-   * will do nothing.
-   */
-  async closeFormContainer() {
+  async closeUserForm() {
     await this.closeButton.click();
-
     const confirmModal = this.modalConfirmYesButton;
-
     if (await confirmModal.isVisible()) {
       await this.modalConfirmYesButton.click();
     }
   }
 
   /**
-   * Deletes a user record by clicking the checkbox next to the user and
-   * clicking the "Delete selected" button. The method will confirm any
-   * modal that appears.
-   * @param userId - The ID of the user to delete.
+   * Asserts that a toast message with the given text is visible.
+   * @param message - The message to check for.
    */
-  async deleteUserRecord(userId: string) {
-    const userLocator = await this.page
-      .frameLocator('iframe')
-      .getByRole('row', { name: userId });
-
-    await userLocator
-      .locator(`.form-field label[for="checkbox_${userId}"]`)
-      .click();
-
-    await this.deleteSelectedButton.click();
-    await this.modalConfirmYesButton.click();
-  }
-
-  /**
-   * Verifies that a user with the specified ID is not visible in the
-   * table. The method will fail if the user is still visible.
-   * @param userId - The ID of the user to verify.
-   */
-  async verifyUserIsDeleted(userId: string) {
-    const userLocator = await this.page
-      .frameLocator('iframe')
-      .getByRole('row', { name: userId });
-    await expect(userLocator).not.toBeVisible();
-  }
-
-  /**
-   * Verifies that the given message is displayed in the toast message.
-   * @param message - The message to verify in the toast message.
-   */
-  async verifyToastMessageVisible(message: string) {
+  async expectToast(message: string) {
     await expect(
       this.page.frameLocator('iframe').getByText(message)
     ).toBeVisible();
   }
 
   /**
-   * Opens the details view for a user record by clicking the right arrow
-   * icon in the table row with the specified user ID.
-   * @param userId - The ID of the user to open the details view for.
+   * Asserts that the user details form contains the expected values.
+   * @param user - The user data to check.
    */
-  async viewUserDetails(userId: string) {
-    const userLocator = await this.page
-      .frameLocator('iframe')
-      .getByRole('row', { name: userId });
-
-    const actionArrow = await userLocator.locator(
-      'td.col-type-action i.ri-arrow-right-line'
-    );
-
-    await actionArrow.click();
-  }
-
-  /**
-   * Verifies that the details of a user are visible in the container.
-   * Checks for the presence of user's email, username, name, website, and avatar.
-   * @param user - The user record containing details to verify.
-   */
-  async verifyUserDetails(user: UserRecord) {
+  async expectUserDetails(user: User) {
     const { email, username, name } = user;
-
     if (email) {
       await expect(this.emailInput).toHaveValue(email);
     }
@@ -287,21 +184,15 @@ export class DashboardPage {
   }
 
   /**
-   * Updates the user record with the specified details.
-   * Fills in the username and name fields with the provided values
-   * and clicks the 'Save changes' button to apply the updates.
-   *
-   * @param newUser - An object containing the new user details.
-   * @param newUser.username - (Optional) The new username for the user.
-   * @param newUser.name - (Optional) The new name for the user.
+   * Edits the user form with the provided new user data and submits changes.
+   * @param newUser - The new user data to fill in.
    */
-  async updateUserRecord(newUser: {
+  async editUser(newUser: {
     email?: string;
     username?: string;
     name?: string;
   }) {
     const { email, username, name } = newUser;
-
     if (email) {
       await this.emailInput.click();
       await this.emailInput.fill(email);
@@ -314,36 +205,27 @@ export class DashboardPage {
       await this.nameInput.click();
       await this.nameInput.fill(name);
     }
-
     await this.saveChangesButton.click();
   }
 
   /**
-   * Sorts the user records in the table by clicking the specified column header.
-   * @param column - The column header to click for sorting.
+   * Sorts the user table by the specified field.
+   * @param field - The column field to sort by.
    */
-  async sortByColumnHeader(column: string) {
+  async sortBy(field: string) {
     const userRow = await this.page
       .frameLocator('iframe')
       .getByRole('row')
-      .filter({ hasText: column })
+      .filter({ hasText: field })
       .first();
-
     await userRow.click();
   }
 
   /**
-   * Verifies that the user records in the table are sorted correctly by a specified field.
-   * The method checks the sorting order (ascending or descending) based on the provided options.
-   *
-   * @param options - The sorting options.
-   * @param options.field - The column field to verify sorting for ('id', 'email', 'username', 'name', 'created', or 'updated').
-   * @param options.order - The expected order of sorting ('asc' for ascending or 'desc' for descending).
-   *
-   * @throws {Error} If the actual sorting order does not match the expected order.
+   * Asserts that the user table is sorted by the given field and order.
+   * @param options - The field and order to check.
    */
-
-  async verifyUserIsSorted(options: {
+  async expectSortedBy(options: {
     field: 'id' | 'email' | 'username' | 'name' | 'created' | 'updated';
     order: 'asc' | 'desc';
   }) {
@@ -384,72 +266,132 @@ export class DashboardPage {
   }
 
   /**
-   * Sorts the table by the specified column and verifies that the
-   * sorting is correct.
-   * @param field - The column to sort by.
-   * @param expectedOrder - The expected sorting order ('asc' or 'desc').
+   * Sorts the user table by the given field and asserts the order.
+   * @param field - The field to sort by.
+   * @param expectedOrder - The expected sort order ('asc' or 'desc').
    */
-  async sortAndVerify(
+  async sortAndExpect(
     field: 'id' | 'email' | 'username' | 'name' | 'created' | 'updated',
     expectedOrder: 'asc' | 'desc'
   ) {
-    await this.sortByColumnHeader(field);
-
-    // Verify sorting
-    await this.verifyUserIsSorted({ field, order: expectedOrder });
+    await this.sortBy(field);
+    await this.expectSortedBy({ field, order: expectedOrder });
   }
 
   /**
-   * Searches for users by a keyword.
-   * @param keyword - The keyword to search for in user records.
+   * Searches for users by the given keyword.
+   * @param keyword - The keyword to search for.
    */
-  async searchUsersByKeyword(keyword: string) {
+  async searchUsers(keyword: string) {
     await this.searchInput.fill(keyword);
-
     await this.submitSearchButton.click();
   }
 
   /**
-   * Clears the search input and triggers a new search query.
-   * The method clicks the 'Clear search' button, which resets the search input
-   * and performs a new search query without any keyword.
+   * Asserts that the search results contain the given keyword in at least one user.
+   * @param users - The list of users returned from the search.
+   * @param keyword - The keyword to check for in the results.
    */
-  async clearSearch() {
-    await this.clearSearchButton.click();
-  }
-
-  /**
-   * Verifies that the search results contain the specified keyword.
-   * Filters the given response body for user records that match the keyword
-   * in their email, username, or name, and asserts that there is at least
-   * one match. Additionally, checks the UI to ensure that the search results
-   * are visible and contain entries matching the keyword.
-   *
-   * @param users - The list of user records returned from the search.
-   * @param keyword - The keyword to verify in the search results.
-   * @throws {Error} If no matching records are found in the response body or UI.
-   */
-
-  async verifySearchResultsContainKeyword(
-    users: UserRecord[],
-    keyword: string
-  ) {
+  async expectSearchResultsContain(users: User[], keyword: string) {
     const results = users.filter(
-      (user: UserRecord) =>
+      (user: User) =>
         user.email.includes(keyword) ||
         user.username?.includes(keyword) ||
         user.name?.includes(keyword)
     );
     expect(results.length).toBeGreaterThan(0);
-
     const searchResults = this.page
       .frameLocator('iframe')
       .getByRole('row')
       .filter({ hasText: keyword })
       .first();
-
     const resultsCount = await searchResults.count();
     await expect(searchResults).toBeVisible();
     await expect(resultsCount).toBeGreaterThan(0);
+  }
+
+  /**
+   * Finds a row in the user table by a field and value, and returns the row data as an object.
+   * @param field - The column field to search by (e.g., 'email').
+   * @param value - The value to match in the specified field.
+   * @returns An object containing the row data.
+   */
+  async getRowByValue(columnName: keyof Table, value: string) {
+    return await this.page
+      .frameLocator('iframe')
+      .locator('tr.row-handle')
+      .filter({
+        has: this.page
+          .frameLocator('iframe')
+          .locator(`td.col-field-${columnName}`, {
+            hasText: value,
+          }),
+      })
+      .first();
+  }
+
+  /**
+   * Asserts that a user with the given value in the specified column has the
+   * expected data in the user table.
+   * @param columnName - The column to search by (e.g., 'email').
+   * @param value - The value to match in the specified column.
+   * @param expectedData - The expected user data.
+   */
+  async expectRowData(
+    columnName: keyof Table,
+    value: string,
+    expectedData: User
+  ) {
+    const rowLocator = await this.getRowByValue(columnName, value);
+
+    await expect(rowLocator.locator('td.col-field-email span')).toHaveText(
+      expectedData.email
+    );
+    await expect(rowLocator.locator('td.col-field-username span')).toHaveText(
+      expectedData.username || ''
+    );
+    await expect(rowLocator.locator('td.col-field-name span')).toHaveText(
+      expectedData.name || ''
+    );
+    await expect(
+      rowLocator.locator('td.col-field-emailVisibility span.label')
+    ).toHaveText(expectedData.emailVisibility ? 'True' : 'False');
+    await expect(
+      rowLocator.locator('td.col-field-verified span.label')
+    ).toHaveText(expectedData.verified ? 'True' : 'False');
+  }
+
+  /**
+   * Asserts that a user with the given ID is not visible in the user table.
+   * @param userId - The ID to check for absence.
+   */
+  async expectUserNotVisible(columnName: keyof Table, value: string) {
+    const rowLocator = await this.getRowByValue(columnName, value);
+
+    await expect(rowLocator).not.toBeVisible();
+  }
+
+  /**
+   * Deletes a user by their ID from the user table.
+   * @param userId - The ID of the user to delete.
+   */
+  async deleteRowSelected(columnName: keyof Table, value: string) {
+    const rowLocator = await this.getRowByValue(columnName, value);
+
+    await rowLocator.locator('td.bulk-select-col .form-field label').click();
+    await this.deleteSelectedButton.click();
+    await this.modalConfirmYesButton.click();
+  }
+
+  /**
+   * Opens the details view for a user by their ID.
+   * @param userId - The ID of the user to view.
+   */
+  async openRowDetails(columnName: keyof Table, value: string) {
+    const rowLocator = await this.getRowByValue(columnName, value);
+    const actionArrow = await rowLocator.locator(
+      'td.col-type-action i.ri-arrow-right-line'
+    );
+    await actionArrow.click();
   }
 }

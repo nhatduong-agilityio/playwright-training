@@ -12,7 +12,7 @@ export interface UserUpdateInput {
   name?: string;
 }
 
-export interface UserRecord {
+export interface User {
   avatar?: string;
   collectionId?: string;
   collectionName?: string;
@@ -30,9 +30,15 @@ export interface UserRecord {
 }
 
 export interface UserListResponse {
-  items: UserRecord[];
+  items: User[];
   page: number;
   perPage: number;
   totalItems: number;
   totalPages: number;
 }
+
+export interface Table
+  extends Omit<
+    User,
+    'password' | 'passwordConfirm' | 'collectionId' | 'collectionName'
+  > {}

@@ -1,5 +1,5 @@
 import { USERS_PATH } from '@/constants';
-import { test } from '@/fixtures';
+import { usersFixture as test } from '@/fixtures';
 import { waitForResponseFromMethodGet } from '@/utils';
 import { expect } from '@playwright/test';
 
@@ -8,17 +8,16 @@ const FIELDS: Array<
 > = ['id', 'email', 'username', 'name', 'created', 'updated'];
 
 test.describe('Sort User Records', () => {
-  test.beforeEach(async ({ userContext, dashboardPage }) => {
+  test.beforeEach(async ({ seededUsers, dashboardPage }) => {
     await test.step('Go to dashboard', async () => {
       await dashboardPage.goto();
-      await dashboardPage.verifyAmOnDashboardPage();
+      await dashboardPage.expectOnDashboard();
     });
 
     await test.step('Verify users are created', async () => {
-      await dashboardPage.refreshTable();
-
-      for (const user of userContext) {
-        await dashboardPage.verifyUserIsCreated(user.email);
+      await dashboardPage.refreshButton.click();
+      for (const user of seededUsers) {
+        await dashboardPage.expectRowData('email', user.email, user);
       }
     });
   });
@@ -33,7 +32,7 @@ test.describe('Sort User Records', () => {
         // Sort ascending
         const [getPromiseAsc] = await Promise.all([
           waitForResponseFromMethodGet({ page, url: USERS_PATH }),
-          dashboardPage.sortAndVerify(field, 'asc'),
+          dashboardPage.sortAndExpect(field, 'asc'),
         ]);
         expect(getPromiseAsc.status()).toBe(200);
       });
@@ -42,7 +41,7 @@ test.describe('Sort User Records', () => {
         // Sort descending
         const [getPromiseDesc] = await Promise.all([
           waitForResponseFromMethodGet({ page, url: USERS_PATH }),
-          dashboardPage.sortAndVerify(field, 'desc'),
+          dashboardPage.sortAndExpect(field, 'desc'),
         ]);
         expect(getPromiseDesc.status()).toBe(200);
       });

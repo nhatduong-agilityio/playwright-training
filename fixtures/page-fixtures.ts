@@ -1,15 +1,13 @@
 import { APIRequestContext, test as base } from '@playwright/test';
 import { LoginPage, DashboardPage } from '@/pages';
-import { createMultipleUsers, extractAccessToken } from '@/utils';
+import { extractAccessToken } from '@/utils';
 import { BASE_URL } from '@/constants';
-import { UserRecord } from '@/types';
-import { deleteUserAction } from '@/actions';
+import { User } from '@/types';
 
 interface PageFixtures {
   apiContext: APIRequestContext;
   loginPage: LoginPage;
   dashboardPage: DashboardPage;
-  userContext: UserRecord[];
 }
 
 /**
@@ -43,31 +41,5 @@ export const test = base.extend<PageFixtures>({
     });
     await use(context);
     await context.dispose();
-  },
-
-  /**
-   * Provides a UserRecord context for tests.
-   *
-   * The fixture creates a user with the given properties:
-   * - email: a valid email address
-   * - password: a valid password
-   * - passwordConfirm: the same as password
-   * - username: a valid username
-   * - name: a valid name
-   * - emailVisibility: true
-   *
-   * The user is deleted after the test.
-   */
-  userContext: async ({ apiContext, dashboardPage }, use) => {
-    const users = await createMultipleUsers(apiContext, 3);
-
-    await use(users);
-
-    for (const user of users) {
-      if (user && user.id) {
-        await deleteUserAction(apiContext, user.id);
-      }
-    }
-    await dashboardPage.refreshTable();
   },
 });

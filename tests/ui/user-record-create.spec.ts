@@ -3,7 +3,12 @@ import { expect } from '@playwright/test';
 import { INVALID_USERS, VALID_USER } from '@/constants';
 import { waitResponseFromMethodPost } from '@/utils';
 import { USERS_PATH } from '@/constants/urls';
-import { deleteUserAction } from '@/actions';
+import { deleteUser } from '@/actions';
+import {
+  EMAIL_REQUIRED_ERROR,
+  EMAIL_INVALID_ERROR,
+  PASSWORD_MISMATCH_ERROR,
+} from '@/constants';
 
 const VALIDATION_TEST_PARAMETERS = [
   {
@@ -43,14 +48,14 @@ test.describe('Create User Record', () => {
   test.beforeEach(async ({ dashboardPage }) => {
     email = VALID_USER.email;
     await dashboardPage.goto();
-    await dashboardPage.verifyAmOnDashboardPage();
-    await dashboardPage.createNewRecord();
+    await dashboardPage.expectOnDashboard();
+    await dashboardPage.newRecordButton.click();
   });
 
   test.afterEach(async ({ apiContext, dashboardPage }) => {
     if (userId) {
-      await deleteUserAction(apiContext, userId);
-      await dashboardPage.refreshTable();
+      await deleteUser(apiContext, userId);
+      await dashboardPage.refreshButton.click();
       userId = undefined;
     }
   });
@@ -64,7 +69,7 @@ test.describe('Create User Record', () => {
         url: USERS_PATH,
         page,
       }),
-      dashboardPage.createUser({
+      dashboardPage.submitUserForm({
         email,
         password: VALID_USER.password,
         username: VALID_USER.username,
@@ -77,7 +82,7 @@ test.describe('Create User Record', () => {
     userId = responseBody.id;
     expect(response.status()).toBe(200);
     expect(responseBody.email).toBe(email);
-    await dashboardPage.verifyUserIsCreated(email);
+    await dashboardPage.expectRowData('email', email, responseBody);
   });
 
   // Parameterized validation tests
@@ -86,9 +91,24 @@ test.describe('Create User Record', () => {
       test(`That verify validation errors are shown for ${scenario}`, async ({
         dashboardPage,
       }) => {
-        await dashboardPage.createUser(userData());
-        await dashboardPage[validationMethod]();
-        await dashboardPage.closeFormContainer();
+        await dashboardPage.submitUserForm(userData());
+        if (validationMethod === 'verifyEmailFieldValidationError') {
+          await dashboardPage.expectFieldError(
+            EMAIL_REQUIRED_ERROR,
+            dashboardPage.emailInput
+          );
+        } else if (validationMethod === 'verifyEmailFieldIsInvalid') {
+          await dashboardPage.expectFieldError(
+            EMAIL_INVALID_ERROR,
+            dashboardPage.container
+          );
+        } else if (validationMethod === 'verifyPasswordConfirmationError') {
+          await dashboardPage.expectFieldError(
+            PASSWORD_MISMATCH_ERROR,
+            dashboardPage.container
+          );
+        }
+        await dashboardPage.closeUserForm();
       });
     }
   );
