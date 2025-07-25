@@ -1,7 +1,7 @@
-import { APIRequestContext } from '@playwright/test';
-import { createUserAction } from '@/actions';
+import test, { APIRequestContext } from '@playwright/test';
+import { createUser } from '@/actions';
 import { VALID_USER } from '@/constants';
-import { UserRecord } from '@/types';
+import { User } from '@/types';
 
 /**
  * Creates a specified number of unique users via the API for testing purposes.
@@ -16,16 +16,19 @@ export const createMultipleUsers = async (
   request: APIRequestContext,
   count: number,
   specialString?: string
-): Promise<UserRecord[]> => {
-  const userPromises = Array.from({ length: count }, (_, i) => {
-    const uniqueSuffix = specialString
-      ? `_number${i}${specialString}`
-      : `_number${i}`;
-    const email = VALID_USER.email.replace('@', `_number${i}@`);
-    const username = `${VALID_USER.username}_number${i}`;
-    const name = `${VALID_USER.name} ${uniqueSuffix}`;
+): Promise<User[]> => {
+  const randomId = Math.floor(Math.random() * 1000000).toString();
+  const workerIndex = test.info().workerIndex;
 
-    return createUserAction(request, {
+  const userPromises = Array.from({ length: count }, _ => {
+    // Combine worker index, timestamp, and loop index for high uniqueness
+    const uniqueSuffix = `${workerIndex}_${Date.now()}_${randomId}`;
+
+    const email = `user_${uniqueSuffix}${specialString ? `_${specialString}` : ''}@example.com`;
+    const username = `user_${uniqueSuffix}${specialString ? `_${specialString}` : ''}`;
+    const name = `User Name ${uniqueSuffix}${specialString ? ` ${specialString}` : ''}`;
+
+    return createUser(request, {
       email,
       password: VALID_USER.password,
       passwordConfirm: VALID_USER.password,
@@ -38,3 +41,30 @@ export const createMultipleUsers = async (
   const responses = await Promise.all(userPromises);
   return Promise.all(responses.map(res => res.json()));
 };
+
+/**
+ * Encodes a keyword into a filter string for user search.
+ *
+ * @param encodedKeyword - The keyword to encode.
+ * @returns The encoded filter string.
+ */
+export function getEncodedUserSearchFilter(encodedKeyword: string): string {
+  const keys = [
+    'id',
+    'email',
+    'username',
+    'name',
+    'password',
+    'tokenKey',
+    'emailVisibility',
+    'verified',
+    'avatar',
+    'website',
+    'created',
+    'updated',
+  ];
+
+  const filterConditions = keys.map(key => `${key}~"${encodedKeyword}"`);
+  const filter = filterConditions.join('||');
+  return encodeURIComponent(filter);
+}

@@ -1,25 +1,29 @@
-import { INVALID_USERS, USERS_PATH } from '@/constants';
-import { test } from '@/fixtures';
+import { INVALID_USERS, USERS_PATH, EMAIL_INVALID_ERROR } from '@/constants';
+import { usersFixture as test } from '@/fixtures';
 import { waitForResponseFromMethodPatch } from '@/utils';
 import { expect } from '@playwright/test';
 
 test.describe('Update User Record', () => {
-  test.beforeEach(async ({ userContext, dashboardPage }) => {
+  test.beforeEach(async ({ seededUsers, dashboardPage }) => {
     await test.step('Go to dashboard', async () => {
       await dashboardPage.goto();
-      await dashboardPage.verifyAmOnDashboardPage();
+      await dashboardPage.expectOnDashboard();
     });
 
     await test.step('Refresh table', async () => {
-      await dashboardPage.refreshTable();
-      await dashboardPage.verifyUserIsCreated(userContext[0].email);
-      await dashboardPage.viewUserDetails(userContext[0].id!);
+      await dashboardPage.refreshButton.click();
+      await dashboardPage.expectRowData(
+        'id',
+        seededUsers[0].id!,
+        seededUsers[0]
+      );
+      await dashboardPage.openRowDetails('id', seededUsers[0].id!);
     });
   });
 
   test('That verify user can update an existing user with valid data', async ({
     dashboardPage,
-    userContext,
+    seededUsers,
     page,
   }) => {
     const newUser = {
@@ -32,24 +36,22 @@ test.describe('Update User Record', () => {
         waitForResponseFromMethodPatch({
           page,
           url: USERS_PATH,
-          id: userContext[0].id!,
+          id: seededUsers[0].id!,
         }),
-        dashboardPage.updateUserRecord(newUser),
+        dashboardPage.editUser(newUser),
       ]);
-      const responseBody = await updateResponse.json();
+      const userUpdated = await updateResponse.json();
 
-      expect(updateResponse.status()).toBe(200);
-      expect(responseBody).toMatchObject({
-        id: userContext[0].id!,
+      await expect(updateResponse.status()).toBe(200);
+      await expect(userUpdated).toMatchObject({
+        id: seededUsers[0].id!,
         username: newUser.username,
         name: newUser.name,
       });
     });
 
     await test.step('Verify user record is updated', async () => {
-      await dashboardPage.verifyToastMessageVisible(
-        'Successfully updated record.'
-      );
+      await dashboardPage.expectToast('Successfully updated record.');
     });
   });
 
@@ -57,14 +59,17 @@ test.describe('Update User Record', () => {
     dashboardPage,
   }) => {
     await test.step('Attempt to update user with invalid data', async () => {
-      await dashboardPage.updateUserRecord({
+      await dashboardPage.editUser({
         email: INVALID_USERS.badEmail.email,
       });
     });
 
     await test.step('Verify validation errors are displayed', async () => {
-      await dashboardPage.verifyEmailFieldIsInvalid();
-      await dashboardPage.closeFormContainer();
+      await dashboardPage.expectFieldError(
+        EMAIL_INVALID_ERROR,
+        dashboardPage.container
+      );
+      await dashboardPage.closeUserForm();
     });
   });
 });

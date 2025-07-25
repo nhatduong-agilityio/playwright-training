@@ -1,5 +1,5 @@
 import { test } from '@/fixtures';
-import { USERS } from '@/constants/users';
+import { USERS } from '@/constants';
 
 test.use({ storageState: { cookies: [], origins: [] } });
 

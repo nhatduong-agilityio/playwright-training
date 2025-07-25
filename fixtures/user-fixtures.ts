@@ -1,0 +1,30 @@
+import { User } from '@/types';
+import { test } from './page-fixtures';
+import { createMultipleUsers } from '@/utils';
+import { deleteUser } from '@/actions';
+
+interface UsersFixtures {
+  seededUsers: User[];
+}
+
+export const usersFixture = test.extend<UsersFixtures>({
+  /**
+   * Seeds the dashboard with three users, and automatically deletes them after use.
+   * @param {Object} context - The test context.
+   * @param {APIRequestContext} context.apiContext - The API request context.
+   * @param {DashboardPage} context.dashboardPage - The dashboard page.
+   * @param {Function} use - A callback function to use the seeded users.
+   */
+  seededUsers: async ({ apiContext, dashboardPage }, use) => {
+    const users = await createMultipleUsers(apiContext, 3);
+
+    await use(users);
+
+    for (const user of users) {
+      if (user && user.id) {
+        await deleteUser(apiContext, user.id);
+      }
+    }
+    await dashboardPage.refreshButton.click();
+  },
+});

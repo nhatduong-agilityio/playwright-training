@@ -1,45 +1,48 @@
-import { createUserAction, deleteUserAction } from '@/actions';
-import { USERS_PATH, VALID_USER } from '@/constants';
-import { test } from '@/fixtures';
-import { UserRecord } from '@/types';
+import { USERS_PATH } from '@/constants';
+import { usersFixture as test } from '@/fixtures';
+import { User } from '@/types';
 import { waitForResponseFromMethodGet } from '@/utils';
 import { expect } from '@playwright/test';
 
 test.describe('Read User Record', () => {
-  test.beforeEach(async ({ userContext, dashboardPage }) => {
+  test.beforeEach(async ({ seededUsers, dashboardPage }) => {
     await test.step('Go to dashboard', async () => {
       await dashboardPage.goto();
-      await dashboardPage.verifyAmOnDashboardPage();
+      await dashboardPage.expectOnDashboard();
     });
 
     await test.step('Refresh table', async () => {
-      await dashboardPage.refreshTable();
-      await dashboardPage.verifyUserIsCreated(userContext[0].email);
+      await dashboardPage.refreshButton.click();
+      await dashboardPage.expectRowData(
+        'email',
+        seededUsers[0].email,
+        seededUsers[0]
+      );
     });
   });
 
   test.afterEach(async ({ dashboardPage }) => {
-    await dashboardPage.closeFormContainer();
+    await dashboardPage.closeUserForm();
   });
 
   test('That verify user can view details of an existing user', async ({
     dashboardPage,
-    userContext,
+    seededUsers,
     page,
   }) => {
-    let userDetail: UserRecord | undefined;
+    let userDetail: User | undefined;
 
     await test.step('View user details', async () => {
       const [response] = await Promise.all([
         waitForResponseFromMethodGet({ page, url: USERS_PATH }),
-        dashboardPage.viewUserDetails(userContext[0].id!),
+        dashboardPage.openRowDetails('id', seededUsers[0].id!),
       ]);
       userDetail = await response.json();
       expect(response.status()).toBe(200);
     });
 
     await test.step('Verify user details', async () => {
-      await dashboardPage.verifyUserDetails(userDetail!);
+      await dashboardPage.expectUserDetails(userDetail!);
     });
   });
 });
