@@ -8,16 +8,19 @@ const FIELDS: Array<
 > = ['id', 'email', 'username', 'name', 'created', 'updated'];
 
 test.describe('Sort User Records', () => {
-  test.beforeEach(async ({ seededUsers, dashboardPage }) => {
+  test.beforeEach(async ({ seededUsers, tablePage, dashboardPage }) => {
     await test.step('Go to dashboard', async () => {
       await dashboardPage.goto();
       await dashboardPage.expectOnDashboard();
+      await tablePage.waitForTableReady();
     });
 
     await test.step('Verify users are created', async () => {
       await dashboardPage.refreshButton.click();
+      await tablePage.waitForTableReady();
+
       for (const user of seededUsers) {
-        await dashboardPage.expectRowData('email', user.email, user);
+        await tablePage.expectRowData('id', user.id!, user);
       }
     });
   });
@@ -25,15 +28,16 @@ test.describe('Sort User Records', () => {
   // Parameterized validation tests
   FIELDS.forEach(field => {
     test(`That verify user can sort users by ${field} column`, async ({
-      dashboardPage,
+      tablePage,
       page,
     }) => {
       await test.step(`Sort users by ${field} column in ascending order`, async () => {
         // Sort ascending
         const [getPromiseAsc] = await Promise.all([
           waitForResponseFromMethodGet({ page, url: USERS_PATH }),
-          dashboardPage.sortAndExpect(field, 'asc'),
+          tablePage.sortByField(field),
         ]);
+        await tablePage.expectSortedByField({ field, order: 'asc' });
         expect(getPromiseAsc.status()).toBe(200);
       });
 
@@ -41,8 +45,9 @@ test.describe('Sort User Records', () => {
         // Sort descending
         const [getPromiseDesc] = await Promise.all([
           waitForResponseFromMethodGet({ page, url: USERS_PATH }),
-          dashboardPage.sortAndExpect(field, 'desc'),
+          tablePage.sortByField(field),
         ]);
+        await tablePage.expectSortedByField({ field, order: 'desc' });
         expect(getPromiseDesc.status()).toBe(200);
       });
     });

@@ -1,4 +1,4 @@
-import test, { APIRequestContext } from '@playwright/test';
+import { test, APIRequestContext } from '@playwright/test';
 import { createUser } from '@/actions';
 import { VALID_USER } from '@/constants';
 import { User } from '@/types';
@@ -20,9 +20,9 @@ export const createMultipleUsers = async (
   const randomId = Math.floor(Math.random() * 1000000).toString();
   const workerIndex = test.info().workerIndex;
 
-  const userPromises = Array.from({ length: count }, _ => {
-    // Combine worker index, timestamp, and loop index for high uniqueness
-    const uniqueSuffix = `${workerIndex}_${Date.now()}_${randomId}`;
+  const userPromises = Array.from({ length: count }, (_, i) => {
+    // Combine worker index, timestamp, random ID, and loop index for high uniqueness
+    const uniqueSuffix = `${workerIndex}_${Date.now()}_${randomId}_${i}`; // Appended _${i}
 
     const email = `user_${uniqueSuffix}${specialString ? `_${specialString}` : ''}@example.com`;
     const username = `user_${uniqueSuffix}${specialString ? `_${specialString}` : ''}`;

@@ -1,13 +1,13 @@
 import { APIRequestContext, test as base } from '@playwright/test';
-import { LoginPage, DashboardPage } from '@/pages';
+import { LoginPage, DashboardPage, TablePage } from '@/pages';
 import { extractAccessToken } from '@/utils';
 import { BASE_URL } from '@/constants';
-import { User } from '@/types';
 
 interface PageFixtures {
   apiContext: APIRequestContext;
   loginPage: LoginPage;
   dashboardPage: DashboardPage;
+  tablePage: TablePage;
 }
 
 /**
@@ -41,5 +41,11 @@ export const test = base.extend<PageFixtures>({
     });
     await use(context);
     await context.dispose();
+  },
+  /**
+   * Provides a TablePage instance for tests.
+   */
+  tablePage: async ({ page }, use) => {
+    await use(new TablePage(page));
   },
 });

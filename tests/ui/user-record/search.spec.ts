@@ -11,7 +11,7 @@ const KEYS: Array<'email' | 'username' | 'name'> = [
 ];
 
 test.describe('Search User Records', () => {
-  test.beforeEach(async ({ seededUsers, dashboardPage }) => {
+  test.beforeEach(async ({ seededUsers, tablePage, dashboardPage }) => {
     await test.step('Go to dashboard', async () => {
       await dashboardPage.goto();
       await dashboardPage.expectOnDashboard();
@@ -19,8 +19,10 @@ test.describe('Search User Records', () => {
 
     await test.step('Verify users are created', async () => {
       await dashboardPage.refreshButton.click();
+      await tablePage.waitForTableReady();
+
       for (const user of seededUsers) {
-        await dashboardPage.expectRowData('email', user.email, user);
+        await tablePage.expectRowData('id', user.id!, user);
       }
     });
   });
@@ -32,6 +34,7 @@ test.describe('Search User Records', () => {
   KEYS.forEach(key => {
     test(`That verify user can search users by ${key}`, async ({
       dashboardPage,
+      tablePage,
       seededUsers,
       page,
     }) => {
@@ -41,7 +44,7 @@ test.describe('Search User Records', () => {
       await test.step(`Search users by ${key}`, async () => {
         const [searchResponse] = await Promise.all([
           waitForResponseFromMethodGet({ page, url: USERS_PATH }),
-          dashboardPage.searchUsers(keyword),
+          dashboardPage.searchRecords(keyword),
         ]);
         await expect(searchResponse.status()).toBe(200);
 
@@ -50,8 +53,7 @@ test.describe('Search User Records', () => {
       });
 
       await test.step('Verify users are found', async () => {
-        await dashboardPage.expectRowData(key, keyword, seededUsers[0]);
-        users;
+        await tablePage.expectRowData(key, keyword, users[0]);
       });
     });
   });

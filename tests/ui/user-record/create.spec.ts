@@ -45,44 +45,74 @@ test.describe('Create User Record', () => {
   let userId: string | undefined;
   let email: string;
 
-  test.beforeEach(async ({ dashboardPage }) => {
+  test.beforeEach(async ({ dashboardPage, tablePage }) => {
     email = VALID_USER.email;
+
     await dashboardPage.goto();
     await dashboardPage.expectOnDashboard();
+
+    // Wait for table to load before starting tests
+    await tablePage.waitForTableReady();
+
     await dashboardPage.newRecordButton.click();
   });
 
-  test.afterEach(async ({ apiContext, dashboardPage }) => {
+  test.afterEach(async ({ apiContext, dashboardPage, tablePage }) => {
     if (userId) {
       await deleteUser(apiContext, userId);
       await dashboardPage.refreshButton.click();
+
+      await tablePage.waitForTableReady();
       userId = undefined;
     }
   });
 
   test('That verify user can create a new user with valid data', async ({
     dashboardPage,
+    tablePage,
     page,
   }) => {
-    const [response] = await Promise.all([
-      waitResponseFromMethodPost({
-        url: USERS_PATH,
-        page,
-      }),
-      dashboardPage.submitUserForm({
+    const userData = {
+      email,
+      password: VALID_USER.password,
+      username: VALID_USER.username,
+      name: VALID_USER.name,
+      emailVisibility: true,
+    };
+
+    await test.step('Create user via form submission', async () => {
+      const [response] = await Promise.all([
+        waitResponseFromMethodPost({
+          url: USERS_PATH,
+          page,
+        }),
+        dashboardPage.submitUserForm(userData),
+      ]);
+
+      const responseBody = await response.json();
+      userId = responseBody.id;
+
+      // Verify API response
+      expect(response.status()).toBe(200);
+      expect(responseBody.email).toBe(email);
+      expect(responseBody.username).toBe(VALID_USER.username);
+      expect(responseBody.name).toBe(VALID_USER.name);
+    });
+
+    await test.step('Verify user appears in table', async () => {
+      await dashboardPage.refreshButton.click();
+      await tablePage.waitForTableReady();
+      // Wait for the record to appear using reliable method
+      await tablePage.expectRowVisible('email', email);
+
+      // Verify the user data in table
+      await tablePage.expectRowData('email', email, {
         email,
-        password: VALID_USER.password,
         username: VALID_USER.username,
         name: VALID_USER.name,
         emailVisibility: true,
-      }),
-    ]);
-    const responseBody = await response.json();
-
-    userId = responseBody.id;
-    expect(response.status()).toBe(200);
-    expect(responseBody.email).toBe(email);
-    await dashboardPage.expectRowData('email', email, responseBody);
+      });
+    });
   });
 
   // Parameterized validation tests
