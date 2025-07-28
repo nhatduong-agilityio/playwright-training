@@ -1,7 +1,6 @@
 import { expect, Locator, Page } from '@playwright/test';
-import { BASE_URL } from '@/constants';
-import { Table, User } from '@/types';
-import { EMAIL_REQUIRED_ERROR } from '@/constants';
+import { BASE_URL, EMAIL_REQUIRED_ERROR } from '@/constants';
+import { User } from '@/types';
 
 export class DashboardPage {
   readonly page: Page;
@@ -25,6 +24,7 @@ export class DashboardPage {
   readonly searchInput: Locator;
   readonly submitSearchButton: Locator;
   readonly clearSearchButton: Locator;
+  readonly userSidebar: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -84,6 +84,9 @@ export class DashboardPage {
       .frameLocator('iframe')
       .locator('form.searchbar')
       .getByRole('button', { name: 'Clear' });
+    this.userSidebar = this.page
+      .frameLocator('iframe')
+      .getByRole('link', { name: 'users' });
   }
 
   /**
@@ -91,6 +94,14 @@ export class DashboardPage {
    */
   async goto() {
     await this.page.goto(BASE_URL);
+  }
+
+  /**
+   * Asserts that the user sidebar is visible.
+   */
+  async expectUserSidebar() {
+    await expect(this.userSidebar).toBeVisible();
+    await this.userSidebar.click();
   }
 
   /**
@@ -102,6 +113,7 @@ export class DashboardPage {
         .frameLocator('iframe')
         .getByRole('button', { name: 'Logged superuser menu' })
     ).toBeVisible();
+    await this.expectUserSidebar();
   }
 
   /**
@@ -209,189 +221,11 @@ export class DashboardPage {
   }
 
   /**
-   * Sorts the user table by the specified field.
-   * @param field - The column field to sort by.
-   */
-  async sortBy(field: string) {
-    const userRow = await this.page
-      .frameLocator('iframe')
-      .getByRole('row')
-      .filter({ hasText: field })
-      .first();
-    await userRow.click();
-  }
-
-  /**
-   * Asserts that the user table is sorted by the given field and order.
-   * @param options - The field and order to check.
-   */
-  async expectSortedBy(options: {
-    field: 'id' | 'email' | 'username' | 'name' | 'created' | 'updated';
-    order: 'asc' | 'desc';
-  }) {
-    const { field, order } = options;
-
-    const cells = this.page
-      .frameLocator('iframe')
-      .getByRole('cell')
-      .locator(`.col-field-${field}`);
-
-    let values = await cells.allTextContents();
-
-    // Clean values
-    values = values.map(value => value.trim());
-
-    // Create expected sorted array
-    const expectedValues = [...values];
-
-    // Sort based on field type
-    if (field === 'created' || field === 'updated') {
-      // Date sorting
-      expectedValues.sort((a, b) => {
-        const dateA = new Date(a);
-        const dateB = new Date(b);
-        const comparison = dateA.getTime() - dateB.getTime();
-        return order === 'asc' ? comparison : -comparison;
-      });
-    } else {
-      // Text sorting
-      expectedValues.sort((a, b) => {
-        const comparison = a.localeCompare(b);
-        return order === 'asc' ? comparison : -comparison;
-      });
-    }
-
-    // Verify sorting
-    expect(values).toEqual(expectedValues);
-  }
-
-  /**
-   * Sorts the user table by the given field and asserts the order.
-   * @param field - The field to sort by.
-   * @param expectedOrder - The expected sort order ('asc' or 'desc').
-   */
-  async sortAndExpect(
-    field: 'id' | 'email' | 'username' | 'name' | 'created' | 'updated',
-    expectedOrder: 'asc' | 'desc'
-  ) {
-    await this.sortBy(field);
-    await this.expectSortedBy({ field, order: expectedOrder });
-  }
-
-  /**
    * Searches for users by the given keyword.
    * @param keyword - The keyword to search for.
    */
-  async searchUsers(keyword: string) {
+  async searchRecords(keyword: string) {
     await this.searchInput.fill(keyword);
     await this.submitSearchButton.click();
-  }
-
-  /**
-   * Asserts that the search results contain the given keyword in at least one user.
-   * @param users - The list of users returned from the search.
-   * @param keyword - The keyword to check for in the results.
-   */
-  async expectSearchResultsContain(users: User[], keyword: string) {
-    const results = users.filter(
-      (user: User) =>
-        user.email.includes(keyword) ||
-        user.username?.includes(keyword) ||
-        user.name?.includes(keyword)
-    );
-    expect(results.length).toBeGreaterThan(0);
-    const searchResults = this.page
-      .frameLocator('iframe')
-      .getByRole('row')
-      .filter({ hasText: keyword })
-      .first();
-    const resultsCount = await searchResults.count();
-    await expect(searchResults).toBeVisible();
-    await expect(resultsCount).toBeGreaterThan(0);
-  }
-
-  /**
-   * Finds a row in the user table by a field and value, and returns the row data as an object.
-   * @param field - The column field to search by (e.g., 'email').
-   * @param value - The value to match in the specified field.
-   * @returns An object containing the row data.
-   */
-  async getRowByValue(columnName: keyof Table, value: string) {
-    return await this.page
-      .frameLocator('iframe')
-      .locator('tr.row-handle')
-      .filter({
-        has: this.page
-          .frameLocator('iframe')
-          .locator(`td.col-field-${columnName}`, {
-            hasText: value,
-          }),
-      })
-      .first();
-  }
-
-  /**
-   * Asserts that a user with the given value in the specified column has the
-   * expected data in the user table.
-   * @param columnName - The column to search by (e.g., 'email').
-   * @param value - The value to match in the specified column.
-   * @param expectedData - The expected user data.
-   */
-  async expectRowData(
-    columnName: keyof Table,
-    value: string,
-    expectedData: User
-  ) {
-    const rowLocator = await this.getRowByValue(columnName, value);
-
-    await expect(rowLocator.locator('td.col-field-email span')).toHaveText(
-      expectedData.email
-    );
-    await expect(rowLocator.locator('td.col-field-username span')).toHaveText(
-      expectedData.username || ''
-    );
-    await expect(rowLocator.locator('td.col-field-name span')).toHaveText(
-      expectedData.name || ''
-    );
-    await expect(
-      rowLocator.locator('td.col-field-emailVisibility span.label')
-    ).toHaveText(expectedData.emailVisibility ? 'True' : 'False');
-    await expect(
-      rowLocator.locator('td.col-field-verified span.label')
-    ).toHaveText(expectedData.verified ? 'True' : 'False');
-  }
-
-  /**
-   * Asserts that a user with the given ID is not visible in the user table.
-   * @param userId - The ID to check for absence.
-   */
-  async expectUserNotVisible(columnName: keyof Table, value: string) {
-    const rowLocator = await this.getRowByValue(columnName, value);
-
-    await expect(rowLocator).not.toBeVisible();
-  }
-
-  /**
-   * Deletes a user by their ID from the user table.
-   * @param userId - The ID of the user to delete.
-   */
-  async deleteRowSelected(columnName: keyof Table, value: string) {
-    const rowLocator = await this.getRowByValue(columnName, value);
-
-    await rowLocator.locator('td.bulk-select-col .form-field label').click();
-    await this.deleteSelectedButton.click();
-    await this.modalConfirmYesButton.click();
-  }
-
-  /**
-   * Opens the details view for a user by their ID.
-   * @param userId - The ID of the user to view.
-   */
-  async openRowDetails(columnName: keyof Table, value: string) {
-    const rowLocator = await this.getRowByValue(columnName, value);
-    const actionArrow = await rowLocator.locator(
-      'td.col-type-action i.ri-arrow-right-line'
-    );
-    await actionArrow.click();
   }
 }

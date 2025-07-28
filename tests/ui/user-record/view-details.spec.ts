@@ -4,8 +4,8 @@ import { User } from '@/types';
 import { waitForResponseFromMethodGet } from '@/utils';
 import { expect } from '@playwright/test';
 
-test.describe('Read User Record', () => {
-  test.beforeEach(async ({ seededUsers, dashboardPage }) => {
+test.describe('View User Details', () => {
+  test.beforeEach(async ({ seededUsers, tablePage, dashboardPage }) => {
     await test.step('Go to dashboard', async () => {
       await dashboardPage.goto();
       await dashboardPage.expectOnDashboard();
@@ -13,7 +13,7 @@ test.describe('Read User Record', () => {
 
     await test.step('Refresh table', async () => {
       await dashboardPage.refreshButton.click();
-      await dashboardPage.expectRowData(
+      await tablePage.expectRowData(
         'email',
         seededUsers[0].email,
         seededUsers[0]
@@ -27,6 +27,7 @@ test.describe('Read User Record', () => {
 
   test('That verify user can view details of an existing user', async ({
     dashboardPage,
+    tablePage,
     seededUsers,
     page,
   }) => {
@@ -35,7 +36,7 @@ test.describe('Read User Record', () => {
     await test.step('View user details', async () => {
       const [response] = await Promise.all([
         waitForResponseFromMethodGet({ page, url: USERS_PATH }),
-        dashboardPage.openRowDetails('id', seededUsers[0].id!),
+        tablePage.openRowDetails('id', seededUsers[0].id!),
       ]);
       userDetail = await response.json();
       expect(response.status()).toBe(200);

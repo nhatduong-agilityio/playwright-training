@@ -4,7 +4,7 @@ import { waitForResponseFromMethodPatch } from '@/utils';
 import { expect } from '@playwright/test';
 
 test.describe('Update User Record', () => {
-  test.beforeEach(async ({ seededUsers, dashboardPage }) => {
+  test.beforeEach(async ({ seededUsers, tablePage, dashboardPage }) => {
     await test.step('Go to dashboard', async () => {
       await dashboardPage.goto();
       await dashboardPage.expectOnDashboard();
@@ -12,12 +12,8 @@ test.describe('Update User Record', () => {
 
     await test.step('Refresh table', async () => {
       await dashboardPage.refreshButton.click();
-      await dashboardPage.expectRowData(
-        'id',
-        seededUsers[0].id!,
-        seededUsers[0]
-      );
-      await dashboardPage.openRowDetails('id', seededUsers[0].id!);
+      await tablePage.expectRowData('id', seededUsers[0].id!, seededUsers[0]);
+      await tablePage.openRowDetails('id', seededUsers[0].id!);
     });
   });
 
