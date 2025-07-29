@@ -1,13 +1,24 @@
-import { APIRequestContext, test as base } from '@playwright/test';
+import { APIRequestContext, APIResponse } from '@playwright/test';
+import { test as base, createBdd } from 'playwright-bdd';
 import { LoginPage, DashboardPage, TablePage } from '@/pages';
 import { extractAccessToken } from '@/utils';
 import { BASE_URL } from '@/constants';
+import { User } from '@/types';
+
+// ** Ctx: cross step context ** //
+interface Ctx {
+  response?: APIResponse;
+  responseBody?: any;
+  createdUser?: User;
+  createdUserId?: string;
+}
 
 interface PageFixtures {
   apiContext: APIRequestContext;
   loginPage: LoginPage;
   dashboardPage: DashboardPage;
   tablePage: TablePage;
+  ctx: Ctx;
 }
 
 /**
@@ -48,4 +59,13 @@ export const test = base.extend<PageFixtures>({
   tablePage: async ({ page }, use) => {
     await use(new TablePage(page));
   },
+  /**
+   * Provides a shared context for passing data between test steps.
+   */
+  ctx: async ({}, use) => {
+    const ctx: Ctx = {};
+    await use(ctx);
+  },
 });
+
+export const { Given, When, Then, Before, After } = createBdd(test);
