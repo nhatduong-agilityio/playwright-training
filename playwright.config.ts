@@ -13,6 +13,8 @@ dotenv.config({ path: path.resolve(__dirname, '.env') });
 const testDir = defineBddConfig({
   features: 'features/*.feature',
   steps: 'features/steps/*.ts',
+  importTestFrom: 'fixtures',
+  disableWarnings: { importTestFrom: true },
 });
 
 /**
@@ -44,7 +46,7 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     // Setup project for authentication
-    { name: 'setup', testMatch: /.*\.setup\.ts/ },
+    { name: 'setup', testDir: './setup', testMatch: /.*\.setup\.ts/ },
     {
       name: 'chromium',
       use: {
