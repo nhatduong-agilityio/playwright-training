@@ -13,6 +13,7 @@ setup(
     await loginPage.goto();
     await loginPage.verifyAmOnLoginPage();
     await loginPage.loginAs(USERS.test.email, USERS.test.password);
+    await loginPage.loginButton.click();
     await loginPage.verifyLoginSuccess();
 
     // Save auth state
