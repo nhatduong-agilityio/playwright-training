@@ -1,2 +1,2 @@
-export * from './page-fixtures';
-export * from './user-fixtures';
+export * from './page';
+export * from './user';

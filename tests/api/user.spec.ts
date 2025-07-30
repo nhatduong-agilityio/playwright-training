@@ -12,12 +12,12 @@ import {
 import { User } from '@/types';
 
 test.describe('User Management API', () => {
-  let createdUserId: string | undefined;
+  let userId: string | undefined;
 
   test.afterEach(async ({ apiContext }) => {
-    if (createdUserId) {
-      await deleteUser(apiContext, createdUserId);
-      createdUserId = undefined;
+    if (userId) {
+      await deleteUser(apiContext, userId);
+      userId = undefined;
     }
   });
 
@@ -35,7 +35,7 @@ test.describe('User Management API', () => {
       expect(response.ok()).toBeTruthy();
       const body = await response.json();
       expect(body.email).toBe(email);
-      createdUserId = body.id;
+      userId = body.id;
     });
   });
 
@@ -62,7 +62,7 @@ test.describe('User Management API', () => {
         emailVisibility: true,
       });
       user = await createRes.json();
-      createdUserId = user.id;
+      userId = user.id;
     });
 
     // Add a small delay in case of eventual consistency
@@ -93,7 +93,7 @@ test.describe('User Management API', () => {
         emailVisibility: true,
       });
       user = await createRes.json();
-      createdUserId = user.id;
+      userId = user.id;
     });
     await test.step('Update user name', async () => {
       if (!user.id) {
@@ -120,7 +120,7 @@ test.describe('User Management API', () => {
         emailVisibility: true,
       });
       user = await createRes.json();
-      createdUserId = user.id;
+      userId = user.id;
     });
     await test.step('Update user with invalid email', async () => {
       if (!user.id) {
@@ -185,15 +185,13 @@ test.describe('User Management API', () => {
         emailVisibility: true,
       });
       user = await createRes.json();
-      createdUserId = user.id;
+      userId = user.id;
     });
     await test.step('Search for user by email', async () => {
       const res = await searchUser(apiContext, email);
       expect(res.ok()).toBeTruthy();
       const body = await res.json();
-      expect(
-        body.items.some((u: User) => u.email === email)
-      ).toBeTruthy();
+      expect(body.items.some((u: User) => u.email === email)).toBeTruthy();
     });
   });
 });

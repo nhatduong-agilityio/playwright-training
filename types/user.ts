@@ -37,8 +37,3 @@ export interface UserListResponse {
   totalPages: number;
 }
 
-export interface Table
-  extends Omit<
-    User,
-    'password' | 'passwordConfirm' | 'collectionId' | 'collectionName'
-  > {}
