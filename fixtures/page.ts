@@ -1,5 +1,5 @@
 import { APIRequestContext, APIResponse, Response, } from '@playwright/test';
-import { test as base, createBdd } from 'playwright-bdd';
+import { test  } from 'playwright-bdd';
 import { LoginPage, DashboardPage, TablePage } from '@/pages';
 import { extractAccessToken } from '@/utils';
 import { BASE_URL } from '@/constants';
@@ -27,7 +27,7 @@ interface PageFixtures {
 /**
  * Extends the base Playwright test with custom page object fixtures.
  */
-export const test = base.extend<PageFixtures>({
+export const base = test.extend<PageFixtures>({
   /**
    * Provides a LoginPage instance for tests.
    */
@@ -71,4 +71,3 @@ export const test = base.extend<PageFixtures>({
   },
 });
 
-export const { Given, When, Then, Before, After } = createBdd(test);

@@ -1,14 +1,12 @@
-import { createBdd } from 'playwright-bdd';
 import {
   EMAIL_INVALID_ERROR,
   EMAIL_REQUIRED_ERROR,
   PASSWORD_MISMATCH_ERROR,
 } from '@/constants';
 import { deleteUser } from '@/actions';
-import { usersFixture } from '../../fixtures/user';
 import { expect } from '@playwright/test';
+import { After, Given, Then, When } from '@/fixtures';
 
-export const { Given, When, Then, Before, After } = createBdd(usersFixture);
 
 // Global cleanup - runs after each test
 After(async ({ apiContext, ctx }) => {

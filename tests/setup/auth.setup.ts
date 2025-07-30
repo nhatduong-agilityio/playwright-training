@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { test as setup } from '@/fixtures';
+import { base as setup } from '@/fixtures';
 import { USERS } from '@/constants';
 
 const authFile = path.join(__dirname, '../../.auth/user.json');

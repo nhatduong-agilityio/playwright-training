@@ -1,4 +1,4 @@
-import { When, Then } from './bdd';
+import { When, Then } from '@/fixtures';
 import { expect } from '@playwright/test';
 import { VALID_USER, INVALID_USERS } from '@/constants';
 import { waitResponseFromMethodPost } from '@/utils';
