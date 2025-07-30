@@ -14,6 +14,7 @@ test.describe('Login', () => {
   test('User can log in with valid credentials', async ({ loginPage }) => {
     await test.step('Enter valid credentials', async () => {
       await loginPage.loginAs(USERS.test.email, USERS.test.password);
+      await loginPage.loginButton.click();
     });
     await test.step('Verify dashboard is visible', async () => {
       await loginPage.verifyLoginSuccess();
@@ -25,6 +26,7 @@ test.describe('Login', () => {
   }) => {
     await test.step('Enter valid email and invalid password', async () => {
       await loginPage.loginAs(USERS.admin.email, 'wrongpass');
+      await loginPage.loginButton.click();
     });
     await test.step('Verify error message is visible', async () => {
       await loginPage.verifyToastMessageVisible('Invalid login credentials');
@@ -35,6 +37,7 @@ test.describe('Login', () => {
   test('Error is shown for empty login fields', async ({ loginPage }) => {
     await test.step('Leave fields blank and attempt login', async () => {
       await loginPage.loginAs('', '');
+      await loginPage.loginButton.click();
     });
     await test.step('Verify validation error is visible', async () => {
       await loginPage.verifyEmptyFieldValidationError();
