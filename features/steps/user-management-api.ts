@@ -9,11 +9,12 @@ import {
   sortUsers,
   updateUser,
 } from '@/actions';
+import { User } from '@/types';
 
 After(async ({ apiContext, ctx }) => {
-  if (ctx.createdUserId) {
-    await deleteUser(apiContext, ctx.createdUserId);
-    ctx.createdUserId = undefined;
+  if (ctx.userId) {
+    await deleteUser(apiContext, ctx.userId);
+    ctx.userId = undefined;
   }
 });
 
@@ -34,8 +35,8 @@ Given('I have created a user with valid data', async ({ apiContext, ctx }) => {
 
   const body = await response.json();
 
-  ctx.createdUser = body;
-  ctx.createdUserId = body.id;
+  ctx.user = body;
+  ctx.userId = body.id;
   ctx.response = response;
   ctx.responseBody = body;
 });
@@ -54,8 +55,8 @@ When(
     });
 
     ctx.responseBody = await ctx.response.json();
-    ctx.createdUserId = ctx.responseBody.id;
-    ctx.createdUser = ctx.responseBody;
+    ctx.userId = ctx.responseBody.id;
+    ctx.user = ctx.responseBody;
   }
 );
 
@@ -90,11 +91,11 @@ Then('the response should contain validation errors', async ({ ctx }) => {
 
 // View user steps
 When('I request the user details by ID', async ({ apiContext, ctx }) => {
-  if (!ctx.createdUser?.id) {
+  if (!ctx.user?.id) {
     throw new Error('No created user ID available');
   }
 
-  ctx.response = await getUser(apiContext, ctx.createdUser.id);
+  ctx.response = await getUser(apiContext, ctx.user.id);
   ctx.responseBody = await ctx.response.json();
 });
 
@@ -103,19 +104,19 @@ Then('I should receive the user information', async ({ ctx }) => {
 });
 
 Then('the email should match the created user', async ({ ctx }) => {
-  expect(ctx.responseBody.email).toBe(ctx.createdUser?.email);
+  expect(ctx.responseBody.email).toBe(ctx.user?.email);
 });
 
 // Update user steps
 When(
   'I update the user name to {string}',
   async ({ apiContext, ctx }, newName: string) => {
-    if (!ctx.createdUser?.id) {
+    if (!ctx.user?.id) {
       throw new Error('No created user ID available');
     }
 
-    ctx.response = await updateUser(apiContext, ctx.createdUser.id, {
-      ...ctx.createdUser,
+    ctx.response = await updateUser(apiContext, ctx.user.id, {
+      ...ctx.user,
       name: newName,
     });
 
@@ -126,11 +127,11 @@ When(
 When(
   'I attempt to update the user with an invalid email',
   async ({ apiContext, ctx }) => {
-    if (!ctx.createdUser?.id) {
+    if (!ctx.user?.id) {
       throw new Error('No created user ID available');
     }
 
-    ctx.response = await updateUser(apiContext, ctx.createdUser.id, {
+    ctx.response = await updateUser(apiContext, ctx.user.id, {
       email: INVALID_USERS.badEmail.email,
     });
 
@@ -155,11 +156,11 @@ Then('the update should fail', async ({ ctx }) => {
 
 // Delete user steps
 When('I delete the user by ID', async ({ apiContext, ctx }) => {
-  if (!ctx.createdUser?.id) {
+  if (!ctx.user?.id) {
     throw new Error('No created user ID available');
   }
 
-  ctx.response = await deleteUser(apiContext, ctx.createdUser.id);
+  ctx.response = await deleteUser(apiContext, ctx.user.id);
 });
 
 Then('the user should be deleted successfully', async ({ ctx }) => {
@@ -169,11 +170,11 @@ Then('the user should be deleted successfully', async ({ ctx }) => {
 Then(
   'requesting the user details should return 404',
   async ({ apiContext, ctx }) => {
-    if (!ctx.createdUser?.id) {
+    if (!ctx.user?.id) {
       throw new Error('No created user ID available');
     }
 
-    const getResponse = await getUser(apiContext, ctx.createdUser.id);
+    const getResponse = await getUser(apiContext, ctx.user.id);
     expect(getResponse.status()).toBe(404);
   }
 );
@@ -197,11 +198,11 @@ Then('the response should contain a list of users', async ({ ctx }) => {
 
 // Search users steps
 When('I search for users by email', async ({ apiContext, ctx }) => {
-  if (!ctx.createdUser?.email) {
+  if (!ctx.user?.email) {
     throw new Error('No created user email available');
   }
 
-  ctx.response = await searchUser(apiContext, ctx.createdUser.email);
+  ctx.response = await searchUser(apiContext, ctx.user.email);
   ctx.responseBody = await ctx.response.json();
 });
 
@@ -211,7 +212,7 @@ Then('the search should be successful', async ({ ctx }) => {
 
 Then('the results should contain the created user', async ({ ctx }) => {
   const userFound = ctx.responseBody.items.some(
-    (u: any) => u.email === ctx.createdUser?.email
+    (u: User) => u.email === ctx.user?.email
   );
   expect(userFound).toBeTruthy();
 });

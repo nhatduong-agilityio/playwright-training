@@ -447,7 +447,7 @@ export class TablePage {
   async expectRowData(
     searchColumn: string,
     searchValue: string,
-    expectedData: Record<string, any>
+    expectedData: Record<string, string | Date | boolean |  null | undefined>
   ): Promise<void> {
     const rowIndex = await this.findRowIndexByCellContent(
       searchColumn,
@@ -528,7 +528,7 @@ export class TablePage {
     );
     const rowLocator = this.getRow(rowIndex);
 
-    const actionArrow = await rowLocator
+    await rowLocator
       .locator('td.col-type-action i.ri-arrow-right-line')
       .click();
   }

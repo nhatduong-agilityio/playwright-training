@@ -1,4 +1,4 @@
-import { test } from '@/fixtures/github-authentication-fixtures';
+import { test } from '@/fixtures/github-authentication';
 import { expect } from '@playwright/test';
 
 test.describe('GitHub Google OAuth Login with 2FA', () => {

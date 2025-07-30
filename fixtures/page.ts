@@ -1,4 +1,4 @@
-import { APIRequestContext, APIResponse } from '@playwright/test';
+import { APIRequestContext, APIResponse, Response, } from '@playwright/test';
 import { test as base, createBdd } from 'playwright-bdd';
 import { LoginPage, DashboardPage, TablePage } from '@/pages';
 import { extractAccessToken } from '@/utils';
@@ -7,10 +7,13 @@ import { User } from '@/types';
 
 // ** Ctx: cross step context ** //
 interface Ctx {
-  response?: APIResponse;
+  response?: APIResponse | Response;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   responseBody?: any;
-  createdUser?: User;
-  createdUserId?: string;
+  user?: User;
+  userId?: string;
+  email?: string;
+  seededUsers?: User[];
 }
 
 interface PageFixtures {

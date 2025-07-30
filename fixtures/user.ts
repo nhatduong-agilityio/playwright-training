@@ -1,5 +1,5 @@
 import { User } from '@/types';
-import { test } from './page-fixtures';
+import { test } from './page';
 import { createMultipleUsers } from '@/utils';
 import { deleteUser } from '@/actions';
 

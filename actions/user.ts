@@ -1,4 +1,4 @@
-import { APIRequestContext, APIResponse } from '@playwright/test';
+import { APIRequestContext,  } from '@playwright/test';
 import { userService } from '@/services';
 import { User } from '@/types';
 import { getEncodedUserSearchFilter } from '@/utils';
