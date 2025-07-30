@@ -447,7 +447,8 @@ export class TablePage {
   async expectRowData(
     searchColumn: string,
     searchValue: string,
-    expectedData: Record<string, string | Date | boolean |  null | undefined>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expectedData: Record<string, any>
   ): Promise<void> {
     const rowIndex = await this.findRowIndexByCellContent(
       searchColumn,

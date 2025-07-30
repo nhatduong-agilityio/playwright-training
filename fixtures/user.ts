@@ -1,13 +1,14 @@
 import { User } from '@/types';
-import { test } from './page';
+import { base } from './page';
 import { createMultipleUsers } from '@/utils';
 import { deleteUser } from '@/actions';
+import { createBdd } from 'playwright-bdd';
 
 interface UsersFixtures {
   seededUsers: User[];
 }
 
-export const usersFixture = test.extend<UsersFixtures>({
+export const test = base.extend<UsersFixtures>({
   /**
    * Seeds the dashboard with three users, and automatically deletes them after use.
    * @param {Object} context - The test context.
@@ -17,6 +18,8 @@ export const usersFixture = test.extend<UsersFixtures>({
    */
   seededUsers: async ({ apiContext, dashboardPage }, use) => {
     const users = await createMultipleUsers(apiContext, 3);
+    console.log(123);
+
 
     await use(users);
 
@@ -28,3 +31,6 @@ export const usersFixture = test.extend<UsersFixtures>({
     await dashboardPage.refreshButton.click();
   },
 });
+
+export const { Given, When, Then, Before, After } = createBdd(test);
+
