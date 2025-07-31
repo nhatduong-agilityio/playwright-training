@@ -1,6 +1,6 @@
-import { test as base } from '@playwright/test';
 import { GoogleLoginPage } from '@/pages';
 import { TOTPHelper } from '@/utils';
+import { base } from './page';
 
 interface GitHubUser {
   email: string;
@@ -16,7 +16,7 @@ interface LoginFixtures {
   generate2FACode: () => Promise<string>;
 }
 
-export const test = base.extend<LoginFixtures>({
+export const github2FA = base.extend<LoginFixtures>({
   googleLoginPage: async ({ page }, use) => {
     const googleLoginPage = new GoogleLoginPage(page);
     await use(googleLoginPage);

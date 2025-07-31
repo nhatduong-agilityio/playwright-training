@@ -20,7 +20,7 @@ export class GoogleLoginPage {
     });
 
     // Google OAuth elements
-    this.emailInput = page.getByRole('textbox', { name: 'Enter your email' });
+    this.emailInput = page.getByRole('textbox', { name: 'Email or phone' });
     this.passwordInput = page.getByRole('textbox', {
       name: 'Enter your password',
     });

@@ -1,4 +1,3 @@
-@only
 Feature: Sort User Records
   As a system administrator
   I want to sort user records by different fields
