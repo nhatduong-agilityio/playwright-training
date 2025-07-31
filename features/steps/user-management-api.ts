@@ -57,7 +57,7 @@ When(
     ctx.responseBody = await ctx.response.json();
     ctx.userId = ctx.responseBody.id;
     ctx.user = ctx.responseBody;
-  }
+  },
 );
 
 When(
@@ -65,7 +65,7 @@ When(
   async ({ apiContext, ctx }) => {
     ctx.response = await createUser(apiContext, INVALID_USERS.empty);
     ctx.responseBody = await ctx.response.json();
-  }
+  },
 );
 
 Then('the user should be created successfully', async ({ ctx }) => {
@@ -121,7 +121,7 @@ When(
     });
 
     ctx.responseBody = await ctx.response.json();
-  }
+  },
 );
 
 When(
@@ -136,7 +136,7 @@ When(
     });
 
     ctx.responseBody = await ctx.response.json();
-  }
+  },
 );
 
 Then('the user should be updated successfully', async ({ ctx }) => {
@@ -147,7 +147,7 @@ Then(
   'the user name should be {string}',
   async ({ ctx }, expectedName: string) => {
     expect(ctx.responseBody.name).toBe(expectedName);
-  }
+  },
 );
 
 Then('the update should fail', async ({ ctx }) => {
@@ -176,7 +176,7 @@ Then(
 
     const getResponse = await getUser(apiContext, ctx.user.id);
     expect(getResponse.status()).toBe(404);
-  }
+  },
 );
 
 // Sort users steps
@@ -185,7 +185,7 @@ When(
   async ({ apiContext, ctx }) => {
     ctx.response = await sortUsers(apiContext, '-email');
     ctx.responseBody = await ctx.response.json();
-  }
+  },
 );
 
 Then('the request should be successful', async ({ ctx }) => {
@@ -212,7 +212,7 @@ Then('the search should be successful', async ({ ctx }) => {
 
 Then('the results should contain the created user', async ({ ctx }) => {
   const userFound = ctx.responseBody.items.some(
-    (u: User) => u.email === ctx.user?.email
+    (u: User) => u.email === ctx.user?.email,
   );
   expect(userFound).toBeTruthy();
 });
@@ -230,14 +230,14 @@ Then(
   'response has prop {string} = {int}',
   async ({ ctx }, keyPath: string, value: number) => {
     expect(ctx.responseBody).toHaveProperty(keyPath, value);
-  }
+  },
 );
 
 Then(
   'response has prop {string} = {string}',
   async ({ ctx }, keyPath: string, value: string) => {
     expect(ctx.responseBody).toHaveProperty(keyPath, value);
-  }
+  },
 );
 
 Then('response object matches:', async ({ ctx }, data: string) => {
@@ -246,6 +246,6 @@ Then('response object matches:', async ({ ctx }, data: string) => {
 
 Then('response array contains:', async ({ ctx }, data: string) => {
   expect(ctx.responseBody).toContainEqual(
-    expect.objectContaining(JSON.parse(data))
+    expect.objectContaining(JSON.parse(data)),
   );
 });

@@ -111,7 +111,7 @@ export class DashboardPage {
     await expect(
       this.page
         .frameLocator('iframe')
-        .getByRole('button', { name: 'Logged superuser menu' })
+        .getByRole('button', { name: 'Logged superuser menu' }),
     ).toBeVisible();
     await this.expectUserSidebar();
   }
@@ -149,7 +149,7 @@ export class DashboardPage {
   async expectFieldError(message: string, locator: Locator) {
     if (message === EMAIL_REQUIRED_ERROR) {
       const validationMessage = await locator.evaluate(
-        (el: HTMLInputElement) => el.validationMessage
+        (el: HTMLInputElement) => el.validationMessage,
       );
       await expect(validationMessage).toBe(message);
     } else {
@@ -174,7 +174,7 @@ export class DashboardPage {
    */
   async expectToast(message: string) {
     await expect(
-      this.page.frameLocator('iframe').getByText(message)
+      this.page.frameLocator('iframe').getByText(message),
     ).toBeVisible();
   }
 

@@ -25,7 +25,7 @@ export const extractAccessToken = (): string => {
     const targetOrigin = new URL(process.env.BASE_URL || BASE_URL).origin;
 
     const originData = storageState.origins?.find(
-      (o: { origin: string }) => o.origin === targetOrigin
+      (o: { origin: string }) => o.origin === targetOrigin,
     );
 
     if (!originData) {
@@ -35,7 +35,7 @@ export const extractAccessToken = (): string => {
 
     const localStorageAuthKey = '__pb_superuser_auth__';
     const authItem = originData.localStorage?.find(
-      (item: { name: string }) => item.name === localStorageAuthKey
+      (item: { name: string }) => item.name === localStorageAuthKey,
     );
 
     if (authItem?.value) {

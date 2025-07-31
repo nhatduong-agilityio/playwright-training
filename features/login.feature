@@ -1,4 +1,3 @@
-@only
 Feature: User Login
   As a user
   I want to log into the application
@@ -36,6 +35,3 @@ Feature: User Login
       | email             | password    | error_message             |
       | invalid@email.com | password123 | Invalid login credentials |
       | test@example.com  | wrongpass   | Invalid login credentials |
-
-
-

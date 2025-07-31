@@ -66,7 +66,7 @@ export const waitResponseFromMethodPost = ({
 }) =>
   page.waitForResponse(
     response =>
-      response.url().includes(url) && response.request().method() === 'POST'
+      response.url().includes(url) && response.request().method() === 'POST',
   );
 
 /**
@@ -90,5 +90,5 @@ export const waitForResponseFromMethodPatch = ({
   page.waitForResponse(
     response =>
       response.url().includes(`${url}/${id}`) &&
-      response.request().method() === 'PATCH'
+      response.request().method() === 'PATCH',
   );

@@ -36,4 +36,3 @@ export interface UserListResponse {
   totalItems: number;
   totalPages: number;
 }
-

@@ -27,7 +27,7 @@ When(
     const responseBody = await response.json();
     ctx.userId = responseBody.id;
     ctx.response = response;
-  }
+  },
 );
 
 When(
@@ -38,7 +38,7 @@ When(
       password: INVALID_USERS.empty.password,
       emailVisibility: false,
     });
-  }
+  },
 );
 
 When(
@@ -49,7 +49,7 @@ When(
       password: INVALID_USERS.badEmail.password,
       emailVisibility: false,
     });
-  }
+  },
 );
 
 When(
@@ -61,14 +61,14 @@ When(
       passwordConfirm: INVALID_USERS.mismatchedPassword.passwordConfirm,
       emailVisibility: false,
     });
-  }
+  },
 );
 
 Then(
   'the user should be created successfully with status {int}',
   async ({ ctx }, expectedStatus: number) => {
     expect(ctx.response?.status()).toBe(expectedStatus);
-  }
+  },
 );
 
 Then(
@@ -77,7 +77,7 @@ Then(
     await dashboardPage.refreshButton.click();
     await tablePage.waitForTableReady();
     await tablePage.expectRowVisible('email', ctx.email!);
-  }
+  },
 );
 
 Then(
@@ -89,5 +89,5 @@ Then(
       name: VALID_USER.name,
       emailVisibility: true,
     });
-  }
+  },
 );

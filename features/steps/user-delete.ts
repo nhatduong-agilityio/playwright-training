@@ -15,12 +15,18 @@ When('I delete the first seeded user', async ({ tablePage, page, ctx }) => {
   ctx.response = deleteResponse;
 });
 
-Then('the user should be deleted successfully with status {int}', async ({ ctx }, expectedStatus: number) => {
-  expect(ctx.response?.status()).toBe(expectedStatus);
-});
+Then(
+  'the user should be deleted successfully with status {int}',
+  async ({ ctx }, expectedStatus: number) => {
+    expect(ctx.response?.status()).toBe(expectedStatus);
+  },
+);
 
-Then('the user should no longer appear in the table', async ({ dashboardPage, tablePage, ctx }) => {
-  await dashboardPage.refreshButton.click();
-  await tablePage.waitForTableReady();
-  await tablePage.expectRowNotVisible('id', ctx.seededUsers![0].id!);
-});
+Then(
+  'the user should no longer appear in the table',
+  async ({ dashboardPage, tablePage, ctx }) => {
+    await dashboardPage.refreshButton.click();
+    await tablePage.waitForTableReady();
+    await tablePage.expectRowNotVisible('id', ctx.seededUsers![0].id!);
+  },
+);

@@ -24,13 +24,13 @@ Feature: User Management API
     Then status is 200
     And the email should match the created user
     And response object matches:
-  ```
-  {
-  "collectionId": "POWMOh0W6IoLUAI",
-  "collectionName": "users",
-  "emailVisibility": true
-  }
-  ```
+      ```
+      {
+        "collectionId": "POWMOh0W6IoLUAI",
+        "collectionName": "users",
+        "emailVisibility": true
+      }
+      ```
 
   Scenario: Edit user with valid data
     Given I have created a user with valid data
@@ -61,4 +61,3 @@ Feature: User Management API
     When I search for users by email
     Then status is 200
     And the results should contain the created user
-

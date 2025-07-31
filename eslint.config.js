@@ -14,7 +14,7 @@ export default [
       '**/.features-gen/**',
       '**/actual-reports/**',
       '**/playwright-report/**',
-      '**/cucumber-report/**'
+      '**/cucumber-report/**',
     ],
   },
   js.configs.recommended,
@@ -28,7 +28,7 @@ export default [
     // all files
     files: ['**/*.{js,mjs,ts}'],
     rules: {
-      'no-console': "warn",
+      'no-console': 'warn',
       'no-undef': 0,
       'no-empty-pattern': 0,
       '@typescript-eslint/no-unused-vars': [
@@ -50,10 +50,20 @@ export default [
       'max-depth': ['error', { max: 2 }],
       'max-nested-callbacks': ['error', { max: 2 }],
       'max-params': ['error', { max: 3 }],
-      'max-statements': ['error', { max: 12 }, { ignoreTopLevelFunctions: false }],
-      'max-lines-per-function': ['error', { max: 30, skipBlankLines: true, skipComments: true }],
+      'max-statements': [
+        'error',
+        { max: 12 },
+        { ignoreTopLevelFunctions: false },
+      ],
+      'max-lines-per-function': [
+        'error',
+        { max: 30, skipBlankLines: true, skipComments: true },
+      ],
       'max-len': ['error', { code: 120, ignoreUrls: true }],
-      'max-lines': ['error', { max: 200, skipComments: true, skipBlankLines: true }],
+      'max-lines': [
+        'error',
+        { max: 200, skipComments: true, skipBlankLines: true },
+      ],
 
       '@typescript-eslint/triple-slash-reference': 0,
       // require is needed for some functions (copied from PW)
