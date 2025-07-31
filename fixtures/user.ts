@@ -18,8 +18,6 @@ export const test = base.extend<UsersFixtures>({
    */
   seededUsers: async ({ apiContext, dashboardPage }, use) => {
     const users = await createMultipleUsers(apiContext, 3);
-    console.log(123);
-
 
     await use(users);
 
@@ -33,4 +31,3 @@ export const test = base.extend<UsersFixtures>({
 });
 
 export const { Given, When, Then, Before, After } = createBdd(test);
-

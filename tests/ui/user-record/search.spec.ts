@@ -1,5 +1,5 @@
 import { USERS_PATH } from '@/constants';
-import { usersFixture as test } from '@/fixtures';
+import { test } from '@/fixtures';
 import { User } from '@/types';
 import { waitForResponseFromMethodGet } from '@/utils';
 import { expect } from '@playwright/test';
