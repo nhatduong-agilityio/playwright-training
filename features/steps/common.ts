@@ -7,7 +7,6 @@ import { deleteUser } from '@/actions';
 import { expect } from '@playwright/test';
 import { After, Given, Then, When } from '@/fixtures';
 
-
 // Global cleanup - runs after each test
 After(async ({ apiContext, ctx }) => {
   if (ctx.userId) {
@@ -50,20 +49,20 @@ Then(
     if (expectedError === EMAIL_REQUIRED_ERROR) {
       await dashboardPage.expectFieldError(
         EMAIL_REQUIRED_ERROR,
-        dashboardPage.emailInput
+        dashboardPage.emailInput,
       );
     } else if (expectedError === EMAIL_INVALID_ERROR) {
       await dashboardPage.expectFieldError(
         EMAIL_INVALID_ERROR,
-        dashboardPage.container
+        dashboardPage.container,
       );
     } else if (expectedError === PASSWORD_MISMATCH_ERROR) {
       await dashboardPage.expectFieldError(
         PASSWORD_MISMATCH_ERROR,
-        dashboardPage.container
+        dashboardPage.container,
       );
     }
-  }
+  },
 );
 
 Then('I should close the user form', async ({ dashboardPage }) => {
@@ -74,7 +73,7 @@ Then(
   'I should see a success message {string}',
   async ({ dashboardPage }, expectedMessage: string) => {
     await dashboardPage.expectToast(expectedMessage);
-  }
+  },
 );
 
 // ============ COMMON ASSERTION STEPS ============
@@ -83,26 +82,26 @@ Then(
   'the request should return status {int}',
   async ({ ctx }, expectedStatus: number) => {
     expect(ctx.response?.status()).toBe(expectedStatus);
-  }
+  },
 );
 
 Then(
   'the sort request should return status {int}',
   async ({ ctx }, expectedStatus: number) => {
     expect(ctx.response?.status()).toBe(expectedStatus);
-  }
+  },
 );
 
 Then(
   'the search should return results with status {int}',
   async ({ ctx }, expectedStatus: number) => {
     expect(ctx.response?.status()).toBe(expectedStatus);
-  }
+  },
 );
 
 Then(
   'the user details request should return status {int}',
   async ({ ctx }, expectedStatus: number) => {
     expect(ctx.response?.status()).toBe(expectedStatus);
-  }
+  },
 );

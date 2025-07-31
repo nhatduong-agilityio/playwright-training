@@ -39,7 +39,7 @@ export class TOTPHelper {
    */
   static fromBase32Secret(
     secret: string,
-    config?: Partial<TOTPConfig>
+    config?: Partial<TOTPConfig>,
   ): TOTPHelper {
     return new TOTPHelper({
       secret,

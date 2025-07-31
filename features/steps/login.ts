@@ -14,7 +14,7 @@ Given(
       localStorage.clear();
       sessionStorage.clear();
     });
-  }
+  },
 );
 
 Given('I am on the login page', async ({ page, loginPage }) => {
@@ -30,7 +30,7 @@ When(
   'I enter valid email {string} and invalid password {string}',
   async ({ loginPage }, email: string, password: string) => {
     await loginPage.loginAs(email, password);
-  }
+  },
 );
 
 When('I leave email and password fields empty', async ({ loginPage }) => {
@@ -41,7 +41,7 @@ When(
   'I enter email {string} and password {string}',
   async ({ loginPage }, email: string, password: string) => {
     await loginPage.loginAs(email, password);
-  }
+  },
 );
 
 When('I submit the login form', async ({ loginPage }) => {
@@ -60,7 +60,7 @@ Then(
   'I should see an error message {string}',
   async ({ loginPage }, expectedMessage: string) => {
     await loginPage.verifyToastMessageVisible(expectedMessage);
-  }
+  },
 );
 
 Then('I should remain on the login page', async ({ loginPage }) => {
@@ -71,5 +71,5 @@ Then(
   'I should see validation errors for empty fields',
   async ({ loginPage }) => {
     await loginPage.verifyEmptyFieldValidationError();
-  }
+  },
 );

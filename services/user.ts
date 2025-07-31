@@ -8,11 +8,8 @@ export const userService = {
     await api.post<User>(request, USERS_PATH, user),
   getById: async (request: APIRequestContext, userId: string) =>
     await api.get(request, `${USERS_PATH}/${userId}`),
-  update: async (
-    request: APIRequestContext,
-    userId: string,
-    updates: User
-  ) => await api.patch<User>(request, `${USERS_PATH}/${userId}`, updates),
+  update: async (request: APIRequestContext, userId: string, updates: User) =>
+    await api.patch<User>(request, `${USERS_PATH}/${userId}`, updates),
   delete: async (request: APIRequestContext, userId: string) =>
     await api.delete(request, `${USERS_PATH}/${userId}`),
   list: async (request: APIRequestContext, params = '') => {

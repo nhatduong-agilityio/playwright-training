@@ -18,5 +18,5 @@ setup(
 
     // Save auth state
     await page.context().storageState({ path: authFile });
-  }
+  },
 );

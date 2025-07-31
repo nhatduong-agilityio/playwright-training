@@ -7,7 +7,7 @@ export const api = {
   post: async <T>(
     request: APIRequestContext,
     path: string,
-    data: T
+    data: T,
   ): Promise<APIResponse> =>
     await request.post(`${API_URL}/${path}`, {
       data,
@@ -15,7 +15,7 @@ export const api = {
   put: async <T>(
     request: APIRequestContext,
     path: string,
-    data: T
+    data: T,
   ): Promise<APIResponse> =>
     await request.put(`${API_URL}/${path}`, {
       data,
@@ -23,13 +23,13 @@ export const api = {
   patch: async <T>(
     request: APIRequestContext,
     path: string,
-    data: T
+    data: T,
   ): Promise<APIResponse> =>
     await request.patch(`${API_URL}/${path}`, {
       data,
     }),
   delete: async (
     request: APIRequestContext,
-    path: string
+    path: string,
   ): Promise<APIResponse> => await request.delete(`${API_URL}/${path}`),
 };

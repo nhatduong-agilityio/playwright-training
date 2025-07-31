@@ -1,4 +1,4 @@
-import { APIRequestContext,  } from '@playwright/test';
+import { APIRequestContext } from '@playwright/test';
 import { userService } from '@/services';
 import { User } from '@/types';
 import { getEncodedUserSearchFilter } from '@/utils';
@@ -57,7 +57,7 @@ export const getUser = async (request: APIRequestContext, userId: string) => {
 export const updateUser = async (
   request: APIRequestContext,
   userId: string,
-  updates: User
+  updates: User,
 ) => {
   try {
     return await userService.update(request, userId, updates);
@@ -79,7 +79,7 @@ export const updateUser = async (
  */
 export const deleteUser = async (
   request: APIRequestContext,
-  userId: string
+  userId: string,
 ) => {
   try {
     return await userService.delete(request, userId);
@@ -101,7 +101,7 @@ export const deleteUser = async (
  */
 export const searchUser = async (
   request: APIRequestContext,
-  encodedKeyword: string
+  encodedKeyword: string,
 ) => {
   try {
     const encodedFilter = getEncodedUserSearchFilter(encodedKeyword);

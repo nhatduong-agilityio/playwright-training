@@ -15,7 +15,7 @@ export class TablePage {
     tableSelector: string = 'table.table',
     headerSelector: string = 'thead th',
     rowSelector: string = 'tbody tr',
-    cellSelector: string = 'td'
+    cellSelector: string = 'td',
   ) {
     this.page = page;
     this.loadingSelector = loadingSelector;
@@ -85,11 +85,11 @@ export class TablePage {
   async getColumnIndex(columnName: string): Promise<number> {
     const headers = await this.getHeaderTexts();
     const index = headers.findIndex(
-      header => header.toLowerCase() === columnName.toLowerCase()
+      header => header.toLowerCase() === columnName.toLowerCase(),
     );
     if (index === -1) {
       throw new Error(
-        `Column "${columnName}" not found in table headers: ${headers.join(', ')}`
+        `Column "${columnName}" not found in table headers: ${headers.join(', ')}`,
       );
     }
     return index;
@@ -114,7 +114,7 @@ export class TablePage {
    */
   async getCellByColumnName(
     rowIndex: number,
-    columnName: string
+    columnName: string,
   ): Promise<Locator> {
     const columnIndex = await this.getColumnIndex(columnName);
     return this.getCell(rowIndex, columnIndex);
@@ -133,7 +133,7 @@ export class TablePage {
    */
   async getCellTextByColumnName(
     rowIndex: number,
-    columnName: string
+    columnName: string,
   ): Promise<string> {
     const cell = await this.getCellByColumnName(rowIndex, columnName);
 
@@ -192,7 +192,7 @@ export class TablePage {
    */
   async findRowIndexByCellContent(
     columnName: string,
-    searchValue: string
+    searchValue: string,
   ): Promise<number> {
     const rowCount = await this.getRowCount();
 
@@ -212,7 +212,7 @@ export class TablePage {
    */
   async findRowsByCellContent(
     columnName: string,
-    searchValue: string
+    searchValue: string,
   ): Promise<number[]> {
     const rowCount = await this.getRowCount();
     const matchingRows: number[] = [];
@@ -240,7 +240,7 @@ export class TablePage {
    */
   async clickCellByColumnName(
     rowIndex: number,
-    columnName: string
+    columnName: string,
   ): Promise<void> {
     const cell = await this.getCellByColumnName(rowIndex, columnName);
     await cell.click();
@@ -300,7 +300,7 @@ export class TablePage {
   async assertCellContent(
     rowIndex: number,
     columnName: string,
-    expectedText: string
+    expectedText: string,
   ): Promise<void> {
     const actualText = await this.getCellTextByColumnName(rowIndex, columnName);
     expect(actualText).toContain(expectedText);
@@ -345,11 +345,11 @@ export class TablePage {
    */
   async deleteRowSelected(
     columnName: string,
-    searchValue: string
+    searchValue: string,
   ): Promise<void> {
     const rowIndex = await this.findRowIndexByCellContent(
       columnName,
-      searchValue
+      searchValue,
     );
     const row = this.getRow(rowIndex);
     await this.selectedRow(row);
@@ -363,11 +363,11 @@ export class TablePage {
    */
   async expectRowNotVisible(
     columnName: string,
-    searchValue: string
+    searchValue: string,
   ): Promise<void> {
     const rowIndex = await this.findRowIndexByCellContent(
       columnName,
-      searchValue
+      searchValue,
     );
 
     await expect(rowIndex).toBe(-1);
@@ -375,11 +375,11 @@ export class TablePage {
 
   async expectRowVisible(
     columnName: string,
-    searchValue: string
+    searchValue: string,
   ): Promise<void> {
     const rowIndex = await this.findRowIndexByCellContent(
       columnName,
-      searchValue
+      searchValue,
     );
 
     await expect(this.getRow(rowIndex)).toBeVisible();
@@ -448,11 +448,11 @@ export class TablePage {
     searchColumn: string,
     searchValue: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expectedData: Record<string, any>
+    expectedData: Record<string, any>,
   ): Promise<void> {
     const rowIndex = await this.findRowIndexByCellContent(
       searchColumn,
-      searchValue
+      searchValue,
     );
 
     const actualRowData = await this.getRowData(rowIndex);
@@ -525,7 +525,7 @@ export class TablePage {
   async openRowDetails(columnName: string, searchValue: string): Promise<void> {
     const rowIndex = await this.findRowIndexByCellContent(
       columnName,
-      searchValue
+      searchValue,
     );
     const rowLocator = this.getRow(rowIndex);
 

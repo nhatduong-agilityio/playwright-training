@@ -52,7 +52,7 @@ export class LoginPage {
    */
   async verifyToastMessageVisible(message: string) {
     await expect(
-      this.page.frameLocator('iframe').getByText(message)
+      this.page.frameLocator('iframe').getByText(message),
     ).toBeVisible();
   }
 
@@ -62,7 +62,7 @@ export class LoginPage {
    */
   async verifyEmptyFieldValidationError() {
     const validationMessage = await this.emailInput.evaluate(
-      (el: HTMLInputElement) => el.validationMessage
+      (el: HTMLInputElement) => el.validationMessage,
     );
 
     await expect(validationMessage).toBe('Please fill out this field.');
@@ -77,7 +77,7 @@ export class LoginPage {
     await expect(
       this.page
         .frameLocator('iframe')
-        .getByRole('button', { name: 'Logged superuser menu' })
+        .getByRole('button', { name: 'Logged superuser menu' }),
     ).toBeVisible();
   }
 }

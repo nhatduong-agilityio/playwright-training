@@ -15,7 +15,7 @@ import { User } from '@/types';
 export const createMultipleUsers = async (
   request: APIRequestContext,
   count: number,
-  specialString?: string
+  specialString?: string,
 ): Promise<User[]> => {
   const randomId = Math.floor(Math.random() * 1000000).toString();
   const workerIndex = test.info().workerIndex;

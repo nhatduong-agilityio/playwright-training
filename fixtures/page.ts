@@ -1,5 +1,5 @@
-import { APIRequestContext, APIResponse, Response, } from '@playwright/test';
-import { test  } from 'playwright-bdd';
+import { APIRequestContext, APIResponse, Response } from '@playwright/test';
+import { test } from 'playwright-bdd';
 import { LoginPage, DashboardPage, TablePage } from '@/pages';
 import { extractAccessToken } from '@/utils';
 import { BASE_URL } from '@/constants';
@@ -70,4 +70,3 @@ export const base = test.extend<PageFixtures>({
     await use(ctx);
   },
 });
-
