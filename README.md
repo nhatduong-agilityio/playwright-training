@@ -1,10 +1,10 @@
 # Playwright Training Project
 
-This document presents a comprehensive training plan for the Playwright practice, detailing targets and ETA for practice advanced.
+This document presents a comprehensive training plan for the Playwright practice, detailing targets and ETA for Playwright-BDD practice.
 
 ## Timeline
 
-- 5 days
+- 3 days
 
 ## Features
 
@@ -12,23 +12,43 @@ This project includes:
 
 - 🎭 [Playwright](https://playwright.dev/) for end-to-end browser testing
 - ⚡ TypeScript for type safety
-- 🧪 Test scenarios for:
+- 🧪 Behavior-driven development (BDD) using [Playwright BDD](https://vitalets.github.io/playwright-bdd/)
+- 📝 Test scenarios written in Gherkin syntax
   - Login
   - CURD (Create, Update, Read, Delete) for collection users
   - Sort users on the table
   - Search users on the table
 - ✅ Assertions for clear expectations
 - 🛠️ Debugging tools: Trace Viewer, Inspector, logs
+- 📦 `pnpm` as the package manager
+- 📊 Custom Playwright configuration in `playwright.config.ts`
 - 📏 Linter with [ESLint](https://eslint.org/)
 - 💖 Code Formatter with [Prettier](https://prettier.io/)
 
 ### Technical Stack
 
-- Playwright [^1.43.0]
-- Node.js [^20]
-- TypeScript [^5]
-- ESLint & Prettier
-- pnpm / npm / yarn
+This project uses the following technical stack:
+
+- **Programming Language:** [TypeScript](https://www.typescriptlang.org/)
+- **Test Framework:** [Playwright BDD](https://vitalets.github.io/playwright-bdd/)
+- **Package Manager:** [pnpm](https://pnpm.js.org/)
+- **CI/CD Pipeline:** [GitHub Actions](https://github.com/features/actions)
+- **Browser Automation:** [Playwright](https://playwright.dev/)
+- **Testing Style:** [Behavior-Driven Development (BDD)](https://en.wikipedia.org/wiki/Behavior-driven_development)
+- **Test Syntax:** [Gherkin](https://cucumber.io/docs/gherkin/reference/)
+- **Operating System:** Linux, macOS, or Windows
+- **Browser Support:** Chromium, Firefox, and WebKit
+
+This technical stack allows for efficient and effective testing of web applications, with a focus on behavior-driven development and browser automation.
+
+## CI/CD Pipeline
+
+This project uses GitHub Actions for continuous integration and deployment. The pipeline is defined in `.github/workflows/playwright.yml` and includes the following steps:
+
+- Install dependencies using `pnpm`
+- Generate BDD test files using `pnpm bddgen`
+- Run Playwright BDD tests using `pnpm exec playwright test`
+- Upload test reports to GitHub
 
 ## Prerequisites
 
@@ -42,7 +62,7 @@ This project includes:
 ```bash
 git clone <repository-url>
 cd training-playwright
-git checkout practice-advanced
+git checkout playwright-bdd
 ```
 
 ### 2. Install Dependencies
@@ -69,8 +89,7 @@ npm test
 
 ### 4. Debug & Troubleshooting
 
-- Use `npx playwright show-report` to view HTML reports
-- Use `npx playwright trace open <trace.zip>` for trace debugging
+- Use `pnpm report` to view cucumber reports
 - Use Playwright Inspector for step-by-step debugging
 
 ## Project Structure
@@ -79,10 +98,6 @@ npm test
 .
 ├── constants/           # Test data and URLs
 ├── features/            # Gherkin feature files
-├── sauce-demo/          # Playwright test specs for Sauce Demo
-├── step-definitions/    # Step definitions for Cucumber
-├── tests/               # Example Playwright tests
-├── tests-examples/      # Additional example tests
 ├── playwright.config.ts # Playwright configuration
 ├── README.md            # Project documentation
 └── ...
