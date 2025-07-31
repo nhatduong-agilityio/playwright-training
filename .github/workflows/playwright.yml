@@ -1,34 +1,54 @@
-name: Playwright Tests
+name: Playwright BDD Tests
 on:
   push:
-    branches: [main, practice-advanced]
+    branches: [main, playwright-bdd]
   pull_request:
-    branches: [main, practice-advanced]
+    branches: [main, playwright-bdd]
+
 jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: pnpm/action-setup@v2
         with:
-          version: 9 # or your preferred pnpm version
+          version: 10 # Updated to match your packageManager version
+
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
           cache: 'pnpm'
+
       - name: Install dependencies
         run: pnpm install
+
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps
-      - name: Run Playwright tests
+
+      - name: Generate BDD test files
+        run: pnpm bddgen
+
+      - name: Run Playwright BDD tests
         run: pnpm exec playwright test
-      - uses: actions/upload-artifact@v4
+
+      - name: Upload Playwright HTML Report
+        uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
+
+      - name: Upload Cucumber HTML Report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: cucumber-report
+          path: cucumber-report/
+          retention-days: 30
+
       # Deploy Playwright HTML report to Vercel if tests succeed
       - name: Install Vercel CLI
         if: ${{ success() }}
@@ -38,4 +58,4 @@ jobs:
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
-          vercel --prod --token $VERCEL_TOKEN --confirm --cwd playwright-report --name playwright-report
+          vercel --prod --token $VERCEL_TOKEN --confirm --cwd cucumber-report --name cucumber-report
