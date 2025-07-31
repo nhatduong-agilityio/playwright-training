@@ -1,5 +1,5 @@
 import { User } from '@/types';
-import { base } from './page';
+import { github2FA } from './github-2fa';
 import { createMultipleUsers } from '@/utils';
 import { deleteUser } from '@/actions';
 import { createBdd } from 'playwright-bdd';
@@ -8,7 +8,7 @@ interface UsersFixtures {
   seededUsers: User[];
 }
 
-export const test = base.extend<UsersFixtures>({
+export const test = github2FA.extend<UsersFixtures>({
   /**
    * Seeds the dashboard with three users, and automatically deletes them after use.
    * @param {Object} context - The test context.
