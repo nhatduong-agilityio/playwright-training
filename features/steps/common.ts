@@ -1,16 +1,12 @@
-import {
-  EMAIL_INVALID_ERROR,
-  EMAIL_REQUIRED_ERROR,
-  PASSWORD_MISMATCH_ERROR,
-} from '@/constants';
-import { deleteUser } from '@/actions';
+import { MESSAGE_ERRORS } from '@/constants';
 import { expect } from '@playwright/test';
 import { After, Given, Then, When } from '@/fixtures';
+import { userService } from '@/services';
 
 // Global cleanup - runs after each test
 After(async ({ apiContext, ctx }) => {
   if (ctx.userId) {
-    await deleteUser(apiContext, ctx.userId);
+    await userService.delete(apiContext, ctx.userId);
     ctx.userId = undefined;
   }
 });
@@ -33,12 +29,12 @@ Given('I have seeded users in the system', async ({ seededUsers, ctx }) => {
 // ============ COMMON NAVIGATION STEPS ============
 
 When('I refresh the table', async ({ dashboardPage, tablePage }) => {
-  await dashboardPage.refreshButton.click();
+  await dashboardPage.clickRefreshButton();
   await tablePage.waitForTableReady();
 });
 
 When('I click the new record button', async ({ dashboardPage }) => {
-  await dashboardPage.newRecordButton.click();
+  await dashboardPage.clickNewRecordButton();
 });
 
 // ============ COMMON VALIDATION STEPS ============
@@ -46,19 +42,19 @@ When('I click the new record button', async ({ dashboardPage }) => {
 Then(
   'I should see a validation error {string}',
   async ({ dashboardPage }, expectedError: string) => {
-    if (expectedError === EMAIL_REQUIRED_ERROR) {
+    if (expectedError === MESSAGE_ERRORS.EMAIL_REQUIRED) {
       await dashboardPage.expectFieldError(
-        EMAIL_REQUIRED_ERROR,
+        MESSAGE_ERRORS.EMAIL_REQUIRED,
         dashboardPage.emailInput,
       );
-    } else if (expectedError === EMAIL_INVALID_ERROR) {
+    } else if (expectedError === MESSAGE_ERRORS.EMAIL_INVALID) {
       await dashboardPage.expectFieldError(
-        EMAIL_INVALID_ERROR,
+        MESSAGE_ERRORS.EMAIL_INVALID,
         dashboardPage.container,
       );
-    } else if (expectedError === PASSWORD_MISMATCH_ERROR) {
+    } else if (expectedError === MESSAGE_ERRORS.PASSWORD_MISMATCH) {
       await dashboardPage.expectFieldError(
-        PASSWORD_MISMATCH_ERROR,
+        MESSAGE_ERRORS.PASSWORD_MISMATCH,
         dashboardPage.container,
       );
     }

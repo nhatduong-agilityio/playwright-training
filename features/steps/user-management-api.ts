@@ -1,19 +1,12 @@
 import { Given, When, Then, After } from '@/fixtures';
 import { expect } from '@playwright/test';
 import { VALID_USER, INVALID_USERS } from '@/constants';
-import {
-  createUser,
-  deleteUser,
-  getUser,
-  searchUser,
-  sortUsers,
-  updateUser,
-} from '@/actions';
+import { userService } from '@/services';
 import { User } from '@/types';
 
 After(async ({ apiContext, ctx }) => {
   if (ctx.userId) {
-    await deleteUser(apiContext, ctx.userId);
+    await userService.delete(apiContext, ctx.userId);
     ctx.userId = undefined;
   }
 });
@@ -26,7 +19,7 @@ Given('I have access to the user management API', async ({ apiContext }) => {
 Given('I have created a user with valid data', async ({ apiContext, ctx }) => {
   const email = VALID_USER.email;
 
-  const response = await createUser(apiContext, {
+  const response = await userService.create(apiContext, {
     email,
     password: VALID_USER.password,
     passwordConfirm: VALID_USER.password,
@@ -47,7 +40,7 @@ When(
   async ({ apiContext, ctx }) => {
     const email = VALID_USER.email;
 
-    ctx.response = await createUser(apiContext, {
+    ctx.response = await userService.create(apiContext, {
       email,
       password: VALID_USER.password,
       passwordConfirm: VALID_USER.password,
@@ -63,7 +56,7 @@ When(
 When(
   'I attempt to create a user with empty fields',
   async ({ apiContext, ctx }) => {
-    ctx.response = await createUser(apiContext, INVALID_USERS.empty);
+    ctx.response = await userService.create(apiContext, INVALID_USERS.empty);
     ctx.responseBody = await ctx.response.json();
   },
 );
@@ -95,7 +88,7 @@ When('I request the user details by ID', async ({ apiContext, ctx }) => {
     throw new Error('No created user ID available');
   }
 
-  ctx.response = await getUser(apiContext, ctx.user.id);
+  ctx.response = await userService.getById(apiContext, ctx.user.id);
   ctx.responseBody = await ctx.response.json();
 });
 
@@ -115,7 +108,7 @@ When(
       throw new Error('No created user ID available');
     }
 
-    ctx.response = await updateUser(apiContext, ctx.user.id, {
+    ctx.response = await userService.update(apiContext, ctx.user.id, {
       ...ctx.user,
       name: newName,
     });
@@ -131,7 +124,7 @@ When(
       throw new Error('No created user ID available');
     }
 
-    ctx.response = await updateUser(apiContext, ctx.user.id, {
+    ctx.response = await userService.update(apiContext, ctx.user.id, {
       email: INVALID_USERS.badEmail.email,
     });
 
@@ -160,7 +153,7 @@ When('I delete the user by ID', async ({ apiContext, ctx }) => {
     throw new Error('No created user ID available');
   }
 
-  ctx.response = await deleteUser(apiContext, ctx.user.id);
+  ctx.response = await userService.delete(apiContext, ctx.user.id);
 });
 
 Then('the user should be deleted successfully', async ({ ctx }) => {
@@ -174,7 +167,7 @@ Then(
       throw new Error('No created user ID available');
     }
 
-    const getResponse = await getUser(apiContext, ctx.user.id);
+    const getResponse = await userService.getById(apiContext, ctx.user.id);
     expect(getResponse.status()).toBe(404);
   },
 );
@@ -183,7 +176,7 @@ Then(
 When(
   'I request users sorted by email in descending order',
   async ({ apiContext, ctx }) => {
-    ctx.response = await sortUsers(apiContext, '-email');
+    ctx.response = await userService.sort(apiContext, '-email');
     ctx.responseBody = await ctx.response.json();
   },
 );
@@ -202,7 +195,7 @@ When('I search for users by email', async ({ apiContext, ctx }) => {
     throw new Error('No created user email available');
   }
 
-  ctx.response = await searchUser(apiContext, ctx.user.email);
+  ctx.response = await userService.search(apiContext, ctx.user.email);
   ctx.responseBody = await ctx.response.json();
 });
 

@@ -1,7 +1,7 @@
 import { User } from '@/types';
 import { github2FA } from './github-2fa';
 import { createMultipleUsers } from '@/utils';
-import { deleteUser } from '@/actions';
+import { userService } from '@/services';
 import { createBdd } from 'playwright-bdd';
 
 interface UsersFixtures {
@@ -23,10 +23,10 @@ export const test = github2FA.extend<UsersFixtures>({
 
     for (const user of users) {
       if (user && user.id) {
-        await deleteUser(apiContext, user.id);
+        await userService.delete(apiContext, user.id);
       }
     }
-    await dashboardPage.refreshButton.click();
+    await dashboardPage.clickRefreshButton();
   },
 });
 

@@ -2,6 +2,7 @@ import { APIRequestContext } from '@playwright/test';
 import { USERS_PATH } from '@/constants';
 import { api } from './api';
 import { User } from '@/types';
+import { getEncodedUserSearchFilter } from '@/utils';
 
 export const userService = {
   create: async (request: APIRequestContext, user: User) =>
@@ -16,8 +17,10 @@ export const userService = {
     const query = params ? `?${params}` : '';
     return await api.get(request, `${USERS_PATH}${query}`);
   },
-  search: async (request: APIRequestContext, keyword: string) =>
-    await api.get(request, `${USERS_PATH}?filter=${keyword}`),
+  search: async (request: APIRequestContext, keyword: string) => {
+    const encodedFilter = getEncodedUserSearchFilter(keyword);
+    return await api.get(request, `${USERS_PATH}?filter=${encodedFilter}`);
+  },
   sort: async (request: APIRequestContext, sortBy: string) =>
     await api.get(request, `${USERS_PATH}?sort=${sortBy}`),
 };

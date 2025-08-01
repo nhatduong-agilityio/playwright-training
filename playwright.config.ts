@@ -11,6 +11,9 @@ import { BASE_URL } from './constants';
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 const testDir = defineBddConfig({
+  aiFix: {
+    promptAttachment: true,
+  },
   features: 'features/*.feature',
   steps: 'features/steps/*.ts',
   importTestFrom: 'fixtures',

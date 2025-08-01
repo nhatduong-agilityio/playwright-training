@@ -10,8 +10,12 @@ Feature: Create User Record
 
   Scenario: Create user with valid data
     When I create a user with the following data:
-      | field           | value |
-      | emailVisibility | true  |
+      | field           | value    |
+      | email           | email    |
+      | password        | password |
+      | username        | username |
+      | name            | name     |
+      | emailVisibility | true     |
     Then the user should be created successfully with status 200
     And the user should appear in the table
     And the user data should match what was entered

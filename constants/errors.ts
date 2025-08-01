@@ -1,3 +1,5 @@
-export const EMAIL_REQUIRED_ERROR = 'Please fill out this field.';
-export const EMAIL_INVALID_ERROR = 'Must be a valid email address.';
-export const PASSWORD_MISMATCH_ERROR = "Values don't match.";
+export enum MESSAGE_ERRORS {
+  EMAIL_REQUIRED = 'Please fill out this field.',
+  EMAIL_INVALID = 'Must be a valid email address.',
+  PASSWORD_MISMATCH = "Values don't match.",
+}

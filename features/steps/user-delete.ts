@@ -25,7 +25,7 @@ Then(
 Then(
   'the user should no longer appear in the table',
   async ({ dashboardPage, tablePage, ctx }) => {
-    await dashboardPage.refreshButton.click();
+    await dashboardPage.clickRefreshButton();
     await tablePage.waitForTableReady();
     await tablePage.expectRowNotVisible('id', ctx.seededUsers![0].id!);
   },

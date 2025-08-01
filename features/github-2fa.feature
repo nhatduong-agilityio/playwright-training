@@ -10,9 +10,9 @@ Feature: GitHub Google OAuth Login with 2FA
 
   Scenario: Successful GitHub OAuth login with Google credentials and 2FA
     When I click Google sign in
-    And I enter valid Google email and password
-    And I verify and enter 2FA code using try another way
-    And I generate and enter real TOTP code
-    And I allow OAuth permissions
+    And I enter "TEST_GOOGLE_EMAIL" and "TEST_GOOGLE_PASSWORD" credentials on Google
+    And I select the verification from otp code option
+    And I generate and enter real OTP code
+    And I allow permissions to login with Google
     Then I should be logged into GitHub successfully
-    And I should see my username displayed correctly
+    And I should see "TEST_GITHUB_USERNAME" account name displayed correctly

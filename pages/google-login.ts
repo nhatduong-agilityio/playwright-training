@@ -2,39 +2,12 @@ import { Page, Locator, expect } from '@playwright/test';
 
 export class GoogleLoginPage {
   readonly page: Page;
-  readonly googleSignInButton: Locator;
-  readonly emailInput: Locator;
-  readonly passwordInput: Locator;
   readonly nextButton: Locator;
-  readonly twoFactorInput: Locator;
-  readonly tryAnotherWayButton: Locator;
-  readonly verificationCodeLink: Locator;
-  readonly allowAccessButton: Locator;
   readonly userAvatar: Locator;
 
   constructor(page: Page) {
     this.page = page;
-    // GitHub login elements
-    this.googleSignInButton = page.getByRole('button', {
-      name: 'Continue with Google',
-    });
-
-    // Google OAuth elements
-    this.emailInput = page.getByRole('textbox', { name: 'Email or phone' });
-    this.passwordInput = page.getByRole('textbox', {
-      name: 'Enter your password',
-    });
     this.nextButton = page.getByRole('button', { name: 'Next' });
-
-    // 2FA elements
-    this.tryAnotherWayButton = page.getByRole('button', {
-      name: 'Try another way',
-    });
-    this.verificationCodeLink = page.getByRole('link', {
-      name: 'Get a verification code from',
-    });
-    this.allowAccessButton = page.getByRole('button', { name: 'Continue' });
-    this.twoFactorInput = page.getByRole('textbox', { name: 'Enter code' });
     this.userAvatar = page.getByRole('button', {
       name: 'Open user navigation menu',
     });
@@ -54,13 +27,19 @@ export class GoogleLoginPage {
   }
 
   async clickGoogleSignIn() {
-    await this.googleSignInButton.click();
+    await this.page
+      .getByRole('button', {
+        name: 'Continue with Google',
+      })
+      .click();
     // Wait for redirect to Google OAuth
     await this.page.waitForURL('**/accounts.google.com/**');
   }
 
   async enterEmail(email: string) {
-    await this.emailInput.fill(email);
+    await this.page
+      .getByRole('textbox', { name: 'Email or phone' })
+      .fill(email);
     await this.nextButton.click();
 
     // Wait for password page or 2FA page
@@ -68,31 +47,34 @@ export class GoogleLoginPage {
   }
 
   async enterPassword(password: string) {
-    await this.passwordInput.fill(password);
+    await this.page
+      .getByRole('textbox', {
+        name: 'Enter your password',
+      })
+      .fill(password);
     await this.nextButton.click();
-
-    // Wait for 2FA page or consent page
-    await this.page.waitForLoadState('networkidle');
   }
 
   async enter2FACode(code: string) {
-    await this.twoFactorInput.fill(code);
+    await this.page.getByRole('textbox', { name: 'Enter code' }).fill(code);
     await this.nextButton.click();
-
-    // Wait for OAuth consent or redirect
-    await this.page.waitForLoadState('networkidle');
   }
 
-  async enterVerificationCode() {
-    await this.verificationCodeLink.click();
-
-    // Wait for OAuth consent or redirect
-    await this.page.waitForLoadState('networkidle');
+  async selectVerificationCode() {
+    await this.page
+      .getByRole('link', {
+        name: 'Get a verification code from',
+      })
+      .click();
   }
 
   async allowOAuthPermissions() {
-    if (await this.allowAccessButton.isVisible()) {
-      await this.allowAccessButton.click();
+    const allowButton = await this.page.getByRole('button', {
+      name: 'Continue',
+    });
+
+    if (await allowButton.isVisible()) {
+      await allowButton.click();
     }
 
     // Wait for redirect back to GitHub
@@ -101,7 +83,7 @@ export class GoogleLoginPage {
 
   async isLoggedIn(): Promise<boolean> {
     try {
-      await this.userAvatar.waitFor({ state: 'visible', timeout: 5000 });
+      await this.userAvatar.waitFor({ state: 'visible' });
       return true;
     } catch {
       return false;
@@ -139,9 +121,12 @@ export class GoogleLoginPage {
   }
 
   async clickTryAnotherWay() {
-    if (await this.tryAnotherWayButton.isVisible()) {
-      await this.tryAnotherWayButton.click();
-      await this.page.waitForLoadState('networkidle');
+    const tryAnotherWayButton = await this.page.getByRole('button', {
+      name: 'Try another way',
+    });
+
+    if (await tryAnotherWayButton.isVisible()) {
+      await tryAnotherWayButton.click();
     }
   }
 }

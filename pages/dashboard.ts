@@ -1,92 +1,110 @@
 import { expect, Locator, Page } from '@playwright/test';
-import { BASE_URL, EMAIL_REQUIRED_ERROR } from '@/constants';
+import { BASE_URL, MESSAGE_ERRORS } from '@/constants';
 import { User } from '@/types';
 
 export class DashboardPage {
   readonly page: Page;
   readonly container: Locator;
-  readonly newRecordButton: Locator;
-  readonly id: Locator;
-  readonly emailInput: Locator;
-  readonly emailToggleButton: Locator;
-  readonly passwordInput: Locator;
-  readonly passwordConfirmInput: Locator;
-  readonly verifySwitchButton: Locator;
-  readonly usernameInput: Locator;
-  readonly nameInput: Locator;
-  readonly createButton: Locator;
-  readonly cancelButton: Locator;
-  readonly refreshButton: Locator;
-  readonly closeButton: Locator;
-  readonly modalConfirmYesButton: Locator;
-  readonly deleteSelectedButton: Locator;
-  readonly saveChangesButton: Locator;
-  readonly searchInput: Locator;
-  readonly submitSearchButton: Locator;
-  readonly clearSearchButton: Locator;
-  readonly userSidebar: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.container = page
       .frameLocator('iframe')
       .locator('.overlay-panel-container');
-    this.newRecordButton = this.page
+  }
+
+  get id() {
+    return this.container.getByLabel('id');
+  }
+
+  get emailInput() {
+    return this.container.getByRole('textbox', {
+      name: ' email *',
+    });
+  }
+
+  get emailToggleButton() {
+    return this.container.getByRole('button', {
+      name: 'Public: Off',
+    });
+  }
+
+  get passwordInput() {
+    return this.container.getByRole('textbox', {
+      name: 'Password *',
+    });
+  }
+
+  get passwordConfirmInput() {
+    return this.container.getByRole('textbox', {
+      name: 'Password confirm *',
+    });
+  }
+
+  get usernameInput() {
+    return this.container.getByRole('textbox', {
+      name: ' username',
+    });
+  }
+
+  get verifySwitchButton() {
+    return this.container.getByText('Verified');
+  }
+
+  get nameInput() {
+    return this.container.getByRole('textbox', { name: ' name' });
+  }
+
+  get modalConfirmYesButton() {
+    return this.container.getByRole('button', {
+      name: 'Yes',
+    });
+  }
+
+  get searchInput() {
+    return this.page
+      .frameLocator('iframe')
+      .locator('form.searchbar')
+      .getByRole('textbox');
+  }
+
+  async clickRefreshButton() {
+    return await this.page
+      .frameLocator('iframe')
+      .getByRole('button', {
+        name: 'Refresh',
+      })
+      .click();
+  }
+
+  async clickSaveChangesButton() {
+    return await this.container
+      .getByRole('button', {
+        name: 'Save changes',
+      })
+      .click();
+  }
+
+  async clickCloseButton() {
+    return this.container
+      .getByRole('button', {
+        name: 'Close',
+      })
+      .click();
+  }
+
+  async clickNewRecordButton() {
+    return await this.page
       .frameLocator('iframe')
       .locator('header')
       .getByRole('button', {
         name: ' New record',
-      });
-    this.id = this.container.getByLabel('id');
-    this.emailInput = this.container.getByRole('textbox', {
-      name: ' email *',
-    });
-    this.emailToggleButton = this.container.getByRole('button', {
-      name: 'Public: Off',
-    });
-    this.passwordInput = this.container.getByRole('textbox', {
-      name: 'Password *',
-    });
-    this.passwordConfirmInput = this.container.getByRole('textbox', {
-      name: 'Password confirm *',
-    });
-    this.verifySwitchButton = this.container.getByText('Verified');
-    this.usernameInput = this.container.getByRole('textbox', {
-      name: ' username',
-    });
-    this.nameInput = this.container.getByRole('textbox', { name: ' name' });
-    this.createButton = this.container.getByRole('button', { name: 'Create' });
-    this.cancelButton = this.container.getByRole('button', { name: 'Cancel' });
-    this.refreshButton = this.page.frameLocator('iframe').getByRole('button', {
-      name: 'Refresh',
-    });
-    this.closeButton = this.container.getByRole('button', {
-      name: 'Close',
-    });
-    this.modalConfirmYesButton = this.container.getByRole('button', {
-      name: 'Yes',
-    });
-    this.deleteSelectedButton = this.page
-      .frameLocator('iframe')
-      .getByRole('button', { name: 'Delete selected' });
-    this.saveChangesButton = this.container.getByRole('button', {
-      name: 'Save changes',
-    });
-    this.searchInput = this.page
-      .frameLocator('iframe')
-      .locator('form.searchbar')
-      .getByRole('textbox');
-    this.submitSearchButton = this.page
-      .frameLocator('iframe')
-      .locator('form.searchbar')
-      .getByRole('button', { name: 'Search' });
-    this.clearSearchButton = this.page
-      .frameLocator('iframe')
-      .locator('form.searchbar')
-      .getByRole('button', { name: 'Clear' });
-    this.userSidebar = this.page
-      .frameLocator('iframe')
-      .getByRole('link', { name: 'users' });
+      })
+      .click();
+  }
+
+  async clickCreateButton() {
+    return await this.container.getByRole('button', { name: 'Create' }).click();
   }
 
   /**
@@ -96,12 +114,24 @@ export class DashboardPage {
     await this.page.goto(BASE_URL);
   }
 
+  async clearSearchButton() {
+    await this.page
+      .frameLocator('iframe')
+      .locator('form.searchbar')
+      .getByRole('button', { name: 'Clear' })
+      .click();
+  }
+
   /**
    * Asserts that the user sidebar is visible.
    */
   async expectUserSidebar() {
-    await expect(this.userSidebar).toBeVisible();
-    await this.userSidebar.click();
+    const userSidebar = this.page
+      .frameLocator('iframe')
+      .getByRole('link', { name: 'users' });
+
+    await expect(userSidebar).toBeVisible();
+    await userSidebar.click();
   }
 
   /**
@@ -138,7 +168,7 @@ export class DashboardPage {
     }
     if (username) await this.usernameInput.fill(username);
     if (name) await this.nameInput.fill(name);
-    await this.createButton.click();
+    await this.clickCreateButton();
   }
 
   /**
@@ -147,7 +177,7 @@ export class DashboardPage {
    * @param locator - The locator for the field or container.
    */
   async expectFieldError(message: string, locator: Locator) {
-    if (message === EMAIL_REQUIRED_ERROR) {
+    if (message === MESSAGE_ERRORS.EMAIL_REQUIRED) {
       const validationMessage = await locator.evaluate(
         (el: HTMLInputElement) => el.validationMessage,
       );
@@ -161,7 +191,7 @@ export class DashboardPage {
    * Closes the user form and confirms any modal if present.
    */
   async closeUserForm() {
-    await this.closeButton.click();
+    await this.clickCloseButton();
     const confirmModal = this.modalConfirmYesButton;
     if (await confirmModal.isVisible()) {
       await this.modalConfirmYesButton.click();
@@ -217,7 +247,7 @@ export class DashboardPage {
       await this.nameInput.click();
       await this.nameInput.fill(name);
     }
-    await this.saveChangesButton.click();
+    await this.clickSaveChangesButton();
   }
 
   /**
@@ -226,6 +256,10 @@ export class DashboardPage {
    */
   async searchRecords(keyword: string) {
     await this.searchInput.fill(keyword);
-    await this.submitSearchButton.click();
+    await this.page
+      .frameLocator('iframe')
+      .locator('form.searchbar')
+      .getByRole('button', { name: 'Search' })
+      .click();
   }
 }

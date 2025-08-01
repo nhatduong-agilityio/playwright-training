@@ -1,5 +1,5 @@
 import { test, APIRequestContext } from '@playwright/test';
-import { createUser } from '@/actions';
+import { userService } from '@/services';
 import { VALID_USER } from '@/constants';
 import { User } from '@/types';
 
@@ -28,7 +28,7 @@ export const createMultipleUsers = async (
     const username = `user_${uniqueSuffix}${specialString ? `_${specialString}` : ''}`;
     const name = `User Name ${uniqueSuffix}${specialString ? ` ${specialString}` : ''}`;
 
-    return createUser(request, {
+    return userService.create(request, {
       email,
       password: VALID_USER.password,
       passwordConfirm: VALID_USER.password,
