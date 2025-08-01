@@ -30,10 +30,9 @@ This project includes:
 This project uses the following technical stack:
 
 - **Programming Language:** [TypeScript](https://www.typescriptlang.org/)
-- **Test Framework:** [Playwright BDD](https://vitalets.github.io/playwright-bdd/)
+- **Test Framework:** [Playwright](https://playwright.dev/), [Playwright BDD](https://vitalets.github.io/playwright-bdd/)
 - **Package Manager:** [pnpm](https://pnpm.js.org/)
 - **CI/CD Pipeline:** [GitHub Actions](https://github.com/features/actions)
-- **Browser Automation:** [Playwright](https://playwright.dev/)
 - **Testing Style:** [Behavior-Driven Development (BDD)](https://en.wikipedia.org/wiki/Behavior-driven_development)
 - **Test Syntax:** [Gherkin](https://cucumber.io/docs/gherkin/reference/)
 - **Operating System:** Linux, macOS, or Windows

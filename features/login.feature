@@ -8,7 +8,7 @@ Feature: User Login
     And I am on the login page
 
   Scenario: Successful login with valid credentials
-    When I enter valid email and password
+    When I enter "TEST_EMAIL" and "TEST_PASSWORD" credentials
     And I submit the login form
     Then I should be logged in successfully
     And I should see the dashboard

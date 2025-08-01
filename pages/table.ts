@@ -3,7 +3,6 @@ import { Page, Locator, expect } from '@playwright/test';
 
 export class TablePage {
   readonly page: Page;
-  readonly loadingSelector: string;
   readonly tableSelector: string;
   readonly headerSelector: string;
   readonly rowSelector: string;
@@ -11,14 +10,12 @@ export class TablePage {
 
   constructor(
     page: Page,
-    loadingSelector: string = 'table.table-loading',
     tableSelector: string = 'table.table',
     headerSelector: string = 'thead th',
     rowSelector: string = 'tbody tr',
     cellSelector: string = 'td',
   ) {
     this.page = page;
-    this.loadingSelector = loadingSelector;
     this.tableSelector = tableSelector;
     this.headerSelector = headerSelector;
     this.rowSelector = rowSelector;
@@ -32,13 +29,11 @@ export class TablePage {
   }
 
   get tableLoading(): Locator {
-    return this.page.frameLocator('iframe').locator(this.loadingSelector);
+    return this.page.frameLocator('iframe').locator('table.table-loading');
   }
 
   async waitForTableReady() {
-    await expect(this.tableLoading).toHaveCount(0, {
-      timeout: 5000,
-    });
+    await expect(this.tableLoading).toHaveCount(0);
   }
 
   get yesConfirmationButton(): Locator {

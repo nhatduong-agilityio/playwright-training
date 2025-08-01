@@ -34,7 +34,7 @@ Given('I have performed a search', async ({ dashboardPage }) => {
 });
 
 When('I clear the search', async ({ dashboardPage }) => {
-  await dashboardPage.clearSearchButton.click();
+  await dashboardPage.clearSearchButton();
 });
 
 Then('all users should be visible again', async ({ tablePage, ctx }) => {

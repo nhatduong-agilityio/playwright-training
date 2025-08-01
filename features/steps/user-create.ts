@@ -1,14 +1,19 @@
-import { When, Then } from '@/fixtures';
+import { DataTable } from 'playwright-bdd';
 import { expect } from '@playwright/test';
-import { VALID_USER, INVALID_USERS } from '@/constants';
+import { When, Then } from '@/fixtures';
+import { INVALID_USERS, VALID_USER } from '@/constants';
 import { waitResponseFromMethodPost } from '@/utils';
 import { USERS_PATH } from '@/constants/';
 
 When(
   'I create a user with the following data:',
-  async ({ dashboardPage, page, ctx }, dataTable) => {
+  async ({ dashboardPage, page, ctx }, dataTable: DataTable) => {
     const userData = dataTable.rowsHash();
-    ctx.email = VALID_USER.email;
+    const email = VALID_USER[userData.email as keyof typeof VALID_USER];
+    const password = VALID_USER[userData.password as keyof typeof VALID_USER];
+    const username = VALID_USER[userData.username as keyof typeof VALID_USER];
+    const name = VALID_USER[userData.name as keyof typeof VALID_USER];
+    ctx.email = email;
 
     const [response] = await Promise.all([
       waitResponseFromMethodPost({
@@ -16,10 +21,10 @@ When(
         page,
       }),
       dashboardPage.submitUserForm({
-        email: VALID_USER.email,
-        password: VALID_USER.password,
-        username: VALID_USER.username,
-        name: VALID_USER.name,
+        email,
+        password,
+        username,
+        name,
         emailVisibility: userData.emailVisibility === 'true',
       }),
     ]);
@@ -74,7 +79,7 @@ Then(
 Then(
   'the user should appear in the table',
   async ({ dashboardPage, tablePage, ctx }) => {
-    await dashboardPage.refreshButton.click();
+    await dashboardPage.clickRefreshButton();
     await tablePage.waitForTableReady();
     await tablePage.expectRowVisible('email', ctx.email!);
   },

@@ -1,5 +1,6 @@
 import { Given, When, Then } from '@/fixtures';
 import { USERS } from '@/constants';
+import { getEnvValue } from '@/utils';
 
 Given(
   'I have a clean session with no stored authentication',
@@ -22,9 +23,15 @@ Given('I am on the login page', async ({ page, loginPage }) => {
   await loginPage.verifyAmOnLoginPage();
 });
 
-When('I enter valid email and password', async ({ loginPage }) => {
-  await loginPage.loginAs(USERS.test.email, USERS.test.password);
-});
+When(
+  'I enter {string} and {string} credentials',
+  async ({ loginPage }, email: string, password: string) => {
+    await loginPage.loginAs(
+      getEnvValue(email, USERS.test.email)!,
+      getEnvValue(password, USERS.test.password)!,
+    );
+  },
+);
 
 When(
   'I enter valid email {string} and invalid password {string}',
@@ -45,7 +52,7 @@ When(
 );
 
 When('I submit the login form', async ({ loginPage }) => {
-  await loginPage.loginButton.click();
+  await loginPage.clickLoginButton();
 });
 
 Then('I should be logged in successfully', async ({ loginPage }) => {

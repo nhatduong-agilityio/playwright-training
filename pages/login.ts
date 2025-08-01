@@ -5,20 +5,11 @@ export class LoginPage {
   readonly page: Page;
   readonly emailInput: Locator;
   readonly passwordInput: Locator;
-  readonly loginButton: Locator;
-  readonly loginHeading: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.emailInput = page.frameLocator('iframe').getByLabel('Email');
     this.passwordInput = page.frameLocator('iframe').getByLabel('Password');
-    this.loginButton = page
-      .frameLocator('iframe')
-      .getByRole('button', { name: 'Login' });
-    this.loginHeading = page.frameLocator('iframe').getByRole('heading', {
-      name: 'Superuser login',
-      level: 4,
-    });
   }
 
   /**
@@ -38,12 +29,26 @@ export class LoginPage {
     await this.passwordInput.fill(password);
   }
 
+  async clickLoginButton() {
+    await this.page
+      .frameLocator('iframe')
+      .getByRole('button', { name: 'Login' })
+      .click();
+  }
+
   /**
    * Verifies that the page is on the login page.
    * @throws {Error} if the page is not on the login page.
    */
   async verifyAmOnLoginPage() {
-    await expect(this.loginHeading).toBeVisible();
+    const heading = await this.page
+      .frameLocator('iframe')
+      .getByRole('heading', {
+        name: 'Superuser login',
+        level: 4,
+      });
+
+    await expect(heading).toBeVisible();
   }
 
   /**
